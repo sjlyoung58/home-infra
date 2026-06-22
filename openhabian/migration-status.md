@@ -81,6 +81,12 @@ needed at any stage of the migration.
 
 ---
 
+## Cleanup tasks
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Remove MQTT integration from HA (bridge remnant) | pending | The MQTT integration was configured solely for the OH→HA bridge. Safe to remove once confirmed nothing else in HA currently depends on it. Do NOT remove if/when Zigbee2MQTT is migrated — that will need MQTT. |
+
 ## Blockers
 
 - Z-Wave JS WebSocket server must be enabled on Pi 5 before any Z-Wave devices appear in HA (Phase 5 prerequisite)
