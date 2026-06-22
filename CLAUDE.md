@@ -60,8 +60,20 @@ task list (things not yet done).
 - Will be integrated into HA via Z-Wave JS integration (WebSocket)
 - Also has Zigbee2MQTT running (~/ha/zigbee2mqtt) — not yet part of migration plan
 
+### OpenHAB 3.4.1 (NAS Docker container) — Alexa bridge
+- Image: `openhab/openhab:3.4.1`
+- Portainer stack: compose/14 → saved in `portainer/stacks/openhab-alexa.yml`
+- URL: http://192.168.1.137:7071 (non-standard port to avoid conflicts)
+- Config volume: /volume2/docker/openhab/
+- Purpose: **sole reason for existence is Alexa integration**
+  - Runs the OH Alexa Smart Home Skill via myopenhab.org cloud
+  - Uses OH Bridge binding to talk to OH 2.5.10 on Pi 3B
+  - Exposes Pi 3B devices to Alexa without upgrading the Pi 3B
+- Full Alexa chain: Alexa → myopenhab.org → OH 3.4.1 (NAS) → OH Bridge → OH 2.5.10 (Pi 3B)
+- **Decommission**: stop this container once HA Emulated Hue is live and Alexa skill removed
+
 ### Raspberry Pi 3B (OpenHabian)
-- Running OpenHabian (OpenHAB-based home automation)
+- Running OpenHabian (OpenHAB-based home automation) version 2.5.10
 - This is the LEGACY system being replaced by HA on the NAS
 - Migration is in progress — not all devices/automations moved yet
 - Keep this documented until migration is complete and Pi 3B is decommissioned

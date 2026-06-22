@@ -111,7 +111,28 @@ needed at any stage of the migration.
 |------|--------|-------|
 | Remove MQTT integration from HA (bridge remnant) | pending | The MQTT integration was configured solely for the OH→HA bridge. Safe to remove once confirmed nothing else in HA currently depends on it. Do NOT remove if/when Zigbee2MQTT is migrated — that will need MQTT. |
 
+## Alexa cutover plan
+
+Current chain: **Alexa → myopenhab.org cloud → OH 3.4.1 (NAS, port 7071) → OH Bridge → OH 2.5.10 (Pi 3B)**
+
+Target: **Alexa → HA Emulated Hue (local, free, no cloud)**
+
+Steps when HA devices are ready:
+1. Enable Emulated Hue in HA (`configuration.yaml`: `emulated_hue:`)
+2. Expose all light entities and groups — ensure names match what Alexa/Julie currently uses
+3. In Alexa app: Add Device → discover new devices (HA lights appear as a Hue bridge)
+4. Verify all expected devices found and named correctly
+5. In Alexa app: remove the openHAB skill (Smart Home → Your Skills → openHAB → Disable)
+6. OH lights disappear from Alexa; HA lights already present — cutover complete
+7. Stop OH 3.4.1 NAS container (no longer needed)
+8. Decommission OH Bridge binding on Pi 3B (or just leave until Pi 3B is decommissioned)
+
+**Name matching is critical** — Alexa voice commands use the device/group names.
+Need to confirm what names Julie currently uses before setting up HA entity names.
+OH item friendly names to preserve (at minimum): Lounge, Conservatory, Summerhouse,
+individual switch names as used in voice commands.
+
 ## Blockers
 
 - Z-Wave JS WebSocket server must be enabled on Pi 5 before any Z-Wave devices appear in HA (Phase 5 prerequisite)
-- Hue bridge IP/credentials needed for HA Hue integration setup
+- Confirm device/group names Julie uses with Alexa before naming HA entities
