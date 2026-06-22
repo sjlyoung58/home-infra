@@ -67,6 +67,20 @@ WebSocket server must be enabled first — see zwave/node-map.md.
 
 ---
 
+## MQTT Bridge approach — decision record
+
+An MQTT bridge between OH and HA was attempted as a transition strategy (HA consuming OH
+device state via MQTT before full migration). Abandoned — proved difficult and flaky in
+practice. Root causes: OH 2.5.x MQTT binding reliability issues, retained-message state
+drift, and the feedback-loop problem on the lounge dimmer (required a mutex workaround that
+still wasn't stable).
+
+Not worth revisiting. Z-Wave devices migrate cleanly via Z-Wave JS → HA direct integration,
+with no OH involvement. Hue migrates via native HA Hue integration. No MQTT bridge is
+needed at any stage of the migration.
+
+---
+
 ## Blockers
 
 - Z-Wave JS WebSocket server must be enabled on Pi 5 before any Z-Wave devices appear in HA (Phase 5 prerequisite)
