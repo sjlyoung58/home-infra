@@ -53,17 +53,41 @@ WebSocket server must be enabled first — see zwave/node-map.md.
 
 | Rule | File | Description | Status | Notes |
 |------|------|-------------|--------|-------|
-| Time-of-day calculator | timeofday.rules | Calculates PREDAWN/DAWN/DAYLIGHT/DAYTIME/PREDUSK/SUNSET/DUSK/NIGHTTIME/BEDTIME/SLEEPTIME from astro sunrise/sunset | pending | HA sun integration + time-based automations can replace this |
-| Pre-dusk lights on | timeofday.rules | PREDUSK → Lounge desk lamp, std lamp, mantlepiece ON | pending | |
-| Sunset conservatory | timeofday.rules | SUNSET → all conservatory + Cons Bird ON | pending | |
-| Dusk outdoor lights | timeofday.rules | DUSK → Rear soffits, front soffits, porch dusk-dawn, side soffits ON | pending | |
-| Nighttime moth trap | timeofday.rules | NIGHTTIME → Moth trap ON | pending | |
-| Daytime Xmas group | timeofday.rules | DAYTIME → Xmas group ON | pending | Seasonal — low priority |
-| Bedtime off | timeofday.rules | BEDTIME → Bedtime group + Xmas group OFF | pending | |
-| Dawn moth trap off | timeofday.rules | DAWN → Moth trap OFF | pending | |
-| Lounge dimmer presets | virtualSwitch.rules | Sets dimmer level from numeric command | pending | Simple helper |
-| Siren test | siren.rules | Fires siren via Z-Wave config HTTP PUT | pending | Test/debug rule; low priority |
+| Time-of-day calculator | timeofday.rules | Calculates PREDAWN/DAWN/DAYLIGHT/DAYTIME/PREDUSK/SUNSET/DUSK/NIGHTTIME/BEDTIME/SLEEPTIME from astro sunrise/sunset | pending | Not needed as a shared sensor in HA — replace with per-automation sun offset triggers (see notes below) |
+| Pre-dusk lights on | timeofday.rules | PREDUSK → Lounge desk lamp, std lamp, mantlepiece ON | pending | `sun.sunset offset: -00:15:00` |
+| Sunset conservatory | timeofday.rules | SUNSET → all conservatory + Cons Bird ON | pending | `sun.sunset offset: 00:00:00` |
+| Dusk outdoor lights | timeofday.rules | DUSK → Rear soffits, front soffits, porch dusk-dawn, side soffits ON | pending | `sun.sunset offset: +00:15:00` |
+| Nighttime moth trap | timeofday.rules | NIGHTTIME → Moth trap ON | pending | `sun.sunset offset: +00:30:00` |
+| Daytime Xmas group | timeofday.rules | DAYTIME → Xmas group ON | pending | `time: "10:29:00"` — seasonal, low priority |
+| Bedtime off | timeofday.rules | BEDTIME → Bedtime group + Xmas group OFF | pending | `time: "23:25:00"` |
+| Dawn moth trap off | timeofday.rules | DAWN → Moth trap OFF | pending | `sun.sunrise offset: 00:00:00` |
+| Lounge dimmer presets | virtualSwitch.rules | Sets dimmer level from numeric command | pending | Simple HA script or input_number |
+| Siren test | siren.rules | Fires siren via Z-Wave config HTTP PUT | pending | Test/debug — low priority |
 | MQTT/dimmer bridge | mqtt.rules | Sync lounge dimmer ↔ MQTT (all commented out / abandoned) | skip | Was experimental; never stable; not migrating |
+
+### Time-of-day migration notes
+
+The OH rule uses a shared `vTimeOfDay` string sensor as a coordination point, with all
+lighting automations reacting to state changes on it. **This pattern is not needed in HA.**
+
+HA's Sun integration provides `sun.sun` plus solar event triggers with arbitrary offsets.
+Each OH triggered rule maps directly to a standalone HA automation using a sun or time
+trigger — no shared sensor required.
+
+The original staging was deliberate (not arbitrary): lights come on in three waves as
+it gets progressively darker, avoiding a sudden all-at-once switch:
+
+| OH state | Offset | What turns on | Rationale |
+|----------|--------|---------------|-----------|
+| PREDUSK | sunset − 15 min | Lounge desk, std lamp, mantlepiece | Indoor warmth before dark |
+| SUNSET | sunset | Conservatory group + Cons Bird | Decorative/transitional |
+| DUSK | sunset + 15 min | Soffits, porch lights | Outdoor infrastructure as it gets properly dark |
+| NIGHTTIME | sunset + 30 min | Moth trap | Nocturnal use |
+
+This staging must be preserved in HA — don't collapse it into a single sunset trigger.
+
+The fixed times (10:29 AM → Xmas on, 23:25 → Bedtime off) are `platform: time` triggers.
+All others are `platform: sun` with offsets.
 
 ---
 

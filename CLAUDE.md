@@ -65,7 +65,10 @@ task list (things not yet done).
 - This is the LEGACY system being replaced by HA on the NAS
 - Migration is in progress — not all devices/automations moved yet
 - Keep this documented until migration is complete and Pi 3B is decommissioned
-- OpenHAB URL: http://192.168.1.78:8080 (confirm IP)
+- OpenHAB URL: http://192.168.1.78:8080
+- SSH: openhabian@192.168.1.78
+- OpenHAB config is also mapped as **drive P:** on the Windows host (not accessible from
+  WSL2 — use SSH from WSL2, or read directly via P:\ from a Windows context)
 
 ### Amazon Echo devices (Alexa)
 - Multiple Echo devices around the house
