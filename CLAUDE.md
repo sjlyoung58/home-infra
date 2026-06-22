@@ -87,6 +87,23 @@ task list (things not yet done).
 - UK Amazon account (amazon.co.uk — important for Alexa integration region)
 - Will be used for voice announcements from HA automations
 
+### iPhones (Simon + Julie)
+- HA Companion app (iOS, free) planned for both phones
+- Provides: geofencing/presence detection, push notifications, remote dashboard
+- Creates `person.simon` and `person.julie` entities (home/away/zone)
+- Use case: turn on front soffits + porch lights on arrival home after dark
+- Also handles push notifications (e.g. garden floodlight left on reminder)
+- **Requires remote access to HA** — Companion app needs to reach HA from internet
+  to report location while away from home LAN (arrival trigger fires too late otherwise)
+- Therefore: set up Cloudflare Tunnel before or alongside Companion app install
+
+### Remote access — Cloudflare Tunnel
+- Free, no port-forwarding, works through double-NAT (Virgin Media Hub 5x → AiMesh)
+- Required for: HA Companion app geofencing, remote dashboard, webhooks from internet
+- Replaces the need for Nabu Casa remote access feature
+- Run as a Docker container on NAS (alongside other stacks)
+- Docs: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
+
 ---
 
 ## Z-Wave Controller Migration (Gen 5 → Z-Stick 10 Pro)
