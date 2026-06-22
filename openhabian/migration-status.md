@@ -131,21 +131,50 @@ Steps when HA devices are ready:
 
 Known voice command patterns:
 - Simon (specific): "Alexa, set the **lounge dimmer** to 15" → target entity by exact name
-- Julie (vague): "Alexa, set the **lounge lights** to 15" → Alexa resolves group → finds one dimmer
+- Julie (vague): "Alexa, set the **lounge lights** to 15" → Alexa resolves via its own device
+  grouping (OH groups are NOT exposed to Alexa — resolution is Alexa-side)
 
-HA approach — expose both via Emulated Hue:
-- Entity: `light.lounge_dimmer` friendly name **"Lounge Dimmer"** (Simon's command)
-- HA light group: **"Lounge Lights"** → all lounge entities (dimmer + std lamp + desk lamp)
-  Alexa hits the group, resolves the single dimmable → more reliable than current OH behaviour
+Source of truth: `openhabian/oh341-config/default.items` (OH 3.4.1 Alexa bridge config)
 
-Groups to create in HA matching expected voice commands:
-- **Lounge Lights** → dimmer, std lamp, desk lamp, mantlepiece
-- **Conservatory Lights** → garden globe, kitchen globe, string lights, bird, cons centre
-- **Summerhouse Lights** → internal lights, front light
+**Definitive Alexa device name map** (name Alexa knows → HA friendly name to use):
 
-Individual device names to preserve (used in direct commands):
-- Lounge Dimmer
-- (others TBC — confirm if any other specific device names are used by voice)
+| Alexa name | OH item label | Node | HA area | Notes |
+|-----------|--------------|------|---------|-------|
+| Lounge Dimmer | Lounge Dimmer | 10 | Lounge | Dimmer (brightness) |
+| Standard Lamp | Lounge Std Lamp | 13 | Lounge | |
+| Desk Lamp | Lounge Desk Lamp | 14 | Lounge | |
+| Garden Globe | Conservatory Garden Globe | 4 | Conservatory | |
+| Kitchen Globe | Conservatory Kitchen Globe | 12 | Conservatory | |
+| String Lights | Cons String Lights | 11 | Conservatory | type: Switch in OH |
+| Centre Lights | Conservatory Centre | 20 ch2 | Conservatory | |
+| Bird | Cons Bird | 15 | Conservatory | type: Switch in OH |
+| Christmas Tree | Cons Xmas Tree | 6 | Conservatory | type: Switch in OH |
+| Internal Lights | Internal Lights | 9 ch1 | Summerhouse | |
+| Front Light | Front Light | 9 ch2 | Summerhouse | |
+| Front Soffits | Front Soffits | 8 ch1 | Front Garden | |
+| Porch Lights | Porch Dusk-Dawn | 8 ch2 | Front Garden | |
+| Rear Soffits | Rear Soffits | 20 ch1 | Back Garden | |
+| Side Soffits | Side Soffits | 16 ch2 | Back Garden | |
+| Garden Floodlight | Garden Floodlight | 16 ch1 | Back Garden | **AUTO-OFF 3 min** (see below) |
+
+**Not exposed to Alexa** (automation-only or not voice-controlled):
+- Lounge Mantlepiece (node 18) — time-of-day automation only
+- Moth Trap (node 7) — time-of-day automation only
+- Kitchen Window (node 5) — not used
+- Siren (node 3) — obviously
+- Dining Room Dimmer (Hue) — never voice-controlled; Hue bridge can be retired
+
+**Garden Floodlight auto-off — must replicate in HA:**
+OH uses `expire="3m,command=OFF"` — turns off automatically 3 minutes after being switched
+on (safety/convenience feature). Replicate in HA as an automation:
+trigger: `light.garden_floodlight` turns on → delay 3 min → turn off.
+
+**Alexa group resolution:**
+OH groups (GF_Conservatory etc.) have no Alexa metadata — they are NOT exposed.
+"Conservatory lights", "Lounge lights" etc. are resolved by Alexa's own device grouping.
+In HA, assign entities to **areas** (Lounge, Conservatory, Summerhouse, Front Garden,
+Back Garden) — Alexa will auto-group by area on discovery, preserving the vague-command
+behaviour Julie relies on.
 
 ## Blockers
 

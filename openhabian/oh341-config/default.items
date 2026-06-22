@@ -1,0 +1,36 @@
+Dimmer FlushDimmerPlusLounge_Dimmer "Lounge Dimmer" <light> (GF_Lounge) { channel="remoteopenhab:server:192_168_1_78:FlushDimmerPlusLounge_Dimmer", alexa="Light" [name="Lounge Dimmer"] }
+
+Switch Flush2RelaysRearSConsCntr_Switch1 "Rear Soffits" <light> (OU_BackGarden,Bedtime) { channel="remoteopenhab:server:192_168_1_78:Flush2RelaysRearSConsCntr_Switch1", alexa="Light" }
+Switch Flush2RelaysRearSConsCntr_Switch2 "Conservatory Centre" <light> (GF_Conservatory,Bedtime) { channel="remoteopenhab:server:192_168_1_78:Flush2RelaysRearSConsCntr_Switch2", alexa="Light" [name="Centre Lights"] }
+
+Switch ZWaveNode016ZMNHBDFlush2Relays_Switch1 "Garden Floodlight" <light> (OU_BackGarden) { channel="remoteopenhab:server:192_168_1_78:ZWaveNode016ZMNHBDFlush2Relays_Switch1", alexa="Light", expire="3m,command=OFF" }
+Switch ZWaveNode016ZMNHBDFlush2Relays_Switch2 "Side Soffits" <light> (OU_BackGarden,Bedtime) { channel="remoteopenhab:server:192_168_1_78:ZWaveNode016ZMNHBDFlush2Relays_Switch2", alexa="Light" }
+
+Switch GWPN11ConsGdn_Switch "Conservatory Garden Globe" <poweroutlet> (GF_Conservatory,Bedtime) { channel="remoteopenhab:server:192_168_1_78:GWPN11ConsGdn_Switch", alexa="Light" [name="Garden Globe"] }
+Switch GWPN12ConsKit_Switch "Conservatory Kitchen Globe" <poweroutlet> (GF_Conservatory,Bedtime) { channel="remoteopenhab:server:192_168_1_78:GWPN12ConsKit_Switch", alexa="Light" [name="Kitchen Globe"] }
+
+Switch GWPN14LoungeStd_Switch "Lounge Std Lamp" <poweroutlet> (GF_Lounge,Bedtime) { channel="remoteopenhab:server:192_168_1_78:GWPN14LoungeStd_Switch", alexa="Light" [name="Standard Lamp"] }
+Switch GWPN15LoungeDesk_Switch "Lounge Desk Lamp" <poweroutlet> (GF_Lounge,Bedtime) { channel="remoteopenhab:server:192_168_1_78:GWPN15LoungeDesk_Switch", alexa="Light" [name="Desk Lamp"] }
+
+Switch Flush2RelaysSummerhouse_Switch2 "Front Light" <light> (OU_Summerhouse) { channel="remoteopenhab:server:192_168_1_78:Flush2RelaysSummerhouse_Switch2", alexa="Light" }
+Switch Flush2RelaysSummerhouse_Switch1 "Internal Lights" <light> (OU_Summerhouse) { channel="remoteopenhab:server:192_168_1_78:Flush2RelaysSummerhouse_Switch1", alexa="Light" }
+
+Switch Flush2RelaysPorch_Switch1 "Front Soffits" <light> (OU_FrontGarden,Bedtime) { channel="remoteopenhab:server:192_168_1_78:Flush2RelaysPorch_Switch1", alexa="Light" }
+Switch Flush2RelaysPorch_Switch2 "Porch Dusk-Dawn" <light> (OU_FrontGarden) { channel="remoteopenhab:server:192_168_1_78:Flush2RelaysPorch_Switch2", alexa="Light" [name="Porch Lights"]}
+
+Switch GWPN13_Switch "Cons String Lights" <poweroutlet> (GF_Conservatory,Bedtime) { channel="remoteopenhab:server:192_168_1_78:GWPN13_Switch", alexa="Switch" [name="String Lights"] }
+Switch GWPN16_Switch "Cons Bird" <poweroutlet> (GF_Conservatory,Bedtime) { channel="remoteopenhab:server:192_168_1_78:GWPN16_Switch", alexa="Switch" [name="Bird"]  }
+
+Switch GWPN10_Switch "Cons Xmas Tree" <poweroutlet> (GF_Conservatory,Bedtime) { channel="remoteopenhab:server:192_168_1_78:GWPN110_Switch", alexa="Switch" [name="Christmas Tree"]  }
+
+Group House
+Group GF_Conservatory (House)
+Group GF_Lounge (House)
+Group GF_Dining (House)
+Group GF_Porch (House)
+Group GF_Kitchen (House)
+Group OU_Summerhouse (House)
+Group OU_BackGarden (House)
+Group OU_FrontGarden (House)
+Group Bedtime
+Group Xmas (House)
