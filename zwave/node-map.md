@@ -25,7 +25,7 @@ settings before configuring HA Z-Wave JS integration (port 3000).
 | 13 | Lounge Std Lamp | Qubino Smart Plug | Lounge | Bedtime group |
 | 14 | Lounge Desk Lamp | Qubino Smart Plug | Lounge | Bedtime group |
 | 15 | Cons Bird | Qubino Smart Plug | Conservatory | Originally "Xmas Icicles"; Bedtime group |
-| 16 | Back Garden Relays | Qubino Flush 2 Relays (ZMNHBD) | Back Garden | Ch1: Garden Floodlight; Ch2: Side Soffits |
+| 16 | **DEAD** — Back Garden Relays | Qubino Flush 2 Relays (ZMNHBD) | Back Garden | Z-Wave switch failed. Ch1 (Garden Floodlight) now on manual 2-way switch. Ch2 (Side Soffits) wired in series with Rear Soffits (node 20 ch1). Plan to replace/revive. |
 | 17 | (Decommissioned) | Qubino Flush 2 Relays | — | Was Cons Centre/Rear Soffits; replaced by node 20 |
 | 18 | Lounge Mantlepiece | Qubino Smart Plug | Lounge | Bedtime + Xmas groups |
 | 20 | Rear Soffit / Cons Centre Relays | Qubino Flush 2 Relays | Back Garden/Conservatory | Ch1: Rear Soffits; Ch2: Cons Centre |

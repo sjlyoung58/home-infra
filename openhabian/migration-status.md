@@ -33,7 +33,7 @@ WebSocket server must be enabled first — see zwave/node-map.md.
 | 13 | Lounge Std Lamp | Lounge | pending | |
 | 14 | Lounge Desk Lamp | Lounge | pending | |
 | 15 | Cons Bird | Conservatory | pending | |
-| 16 | Back Garden Relays (Garden Floodlight, Side Soffits) | Back Garden | pending | 2-channel relay |
+| 16 | **DEAD** Back Garden Relays | Back Garden | skip (for now) | Z-Wave switch failed. Ch1 (Garden Floodlight) → manual 2-way switch, plan to revive. Ch2 (Side Soffits) → wired in series with Rear Soffits (node 20 ch1). Revive as new device when replaced. |
 | 17 | (Decommissioned) | — | skip | Replaced by node 20 |
 | 18 | Lounge Mantlepiece | Lounge | pending | |
 | 20 | Rear Soffits / Cons Centre | Back Garden/Conservatory | pending | 2-channel relay |
@@ -154,8 +154,8 @@ Source of truth: `openhabian/oh341-config/default.items` (OH 3.4.1 Alexa bridge 
 | Front Soffits | Front Soffits | 8 ch1 | Front Garden | |
 | Porch Lights | Porch Dusk-Dawn | 8 ch2 | Front Garden | |
 | Rear Soffits | Rear Soffits | 20 ch1 | Back Garden | |
-| Side Soffits | Side Soffits | 16 ch2 | Back Garden | |
-| Garden Floodlight | Garden Floodlight | 16 ch1 | Back Garden | **AUTO-OFF 3 min** (see below) |
+| Side Soffits | Side Soffits | 16 ch2 | Back Garden | **Node 16 dead** — currently wired in series with Rear Soffits (node 20 ch1). Not independently controllable until node 16 is replaced. |
+| Garden Floodlight | Garden Floodlight | 16 ch1 | Back Garden | **Node 16 dead** — currently on manual 2-way switch. Expose as entity when node 16 replaced. **AUTO-OFF replaced by notification** (see below) |
 
 **Not exposed to Alexa** (automation-only or not voice-controlled):
 - Lounge Mantlepiece (node 18) — time-of-day automation only
@@ -164,10 +164,21 @@ Source of truth: `openhabian/oh341-config/default.items` (OH 3.4.1 Alexa bridge 
 - Siren (node 3) — obviously
 - Dining Room Dimmer (Hue) — never voice-controlled; Hue bridge can be retired
 
-**Garden Floodlight auto-off — must replicate in HA:**
-OH uses `expire="3m,command=OFF"` — turns off automatically 3 minutes after being switched
-on (safety/convenience feature). Replicate in HA as an automation:
-trigger: `light.garden_floodlight` turns on → delay 3 min → turn off.
+**Garden Floodlight — notification instead of auto-off (when node 16 revived):**
+OH had `expire="3m,command=OFF"` — use case is letting the dog out at night and forgetting
+to turn the light off. Preferred HA approach: notification after N minutes rather than
+auto-off, so there's a reminder without the light cutting out unexpectedly.
+Options (decide at implementation time):
+- Alexa announcement: "The garden floodlight has been on for 10 minutes" (needs Alexa integration live)
+- HA mobile app push notification (needs HA Companion app installed)
+- Both: Alexa speaks it, phone also gets a notification
+
+HA automation shape:
+  trigger: garden_floodlight turns on
+  action: wait N minutes (configurable — suggest 10 min)
+  condition: garden_floodlight still on
+  action: Alexa announce + push notify
+  (repeat every N minutes while still on, or just once)
 
 **Alexa group resolution:**
 OH groups (GF_Conservatory etc.) have no Alexa metadata — they are NOT exposed.
