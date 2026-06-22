@@ -128,9 +128,24 @@ Steps when HA devices are ready:
 8. Decommission OH Bridge binding on Pi 3B (or just leave until Pi 3B is decommissioned)
 
 **Name matching is critical** — Alexa voice commands use the device/group names.
-Need to confirm what names Julie currently uses before setting up HA entity names.
-OH item friendly names to preserve (at minimum): Lounge, Conservatory, Summerhouse,
-individual switch names as used in voice commands.
+
+Known voice command patterns:
+- Simon (specific): "Alexa, set the **lounge dimmer** to 15" → target entity by exact name
+- Julie (vague): "Alexa, set the **lounge lights** to 15" → Alexa resolves group → finds one dimmer
+
+HA approach — expose both via Emulated Hue:
+- Entity: `light.lounge_dimmer` friendly name **"Lounge Dimmer"** (Simon's command)
+- HA light group: **"Lounge Lights"** → all lounge entities (dimmer + std lamp + desk lamp)
+  Alexa hits the group, resolves the single dimmable → more reliable than current OH behaviour
+
+Groups to create in HA matching expected voice commands:
+- **Lounge Lights** → dimmer, std lamp, desk lamp, mantlepiece
+- **Conservatory Lights** → garden globe, kitchen globe, string lights, bird, cons centre
+- **Summerhouse Lights** → internal lights, front light
+
+Individual device names to preserve (used in direct commands):
+- Lounge Dimmer
+- (others TBC — confirm if any other specific device names are used by voice)
 
 ## Blockers
 
