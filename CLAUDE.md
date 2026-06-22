@@ -82,6 +82,28 @@ task list (things not yet done).
 - OpenHAB config is also mapped as **drive P:** on the Windows host (not accessible from
   WSL2 — use SSH from WSL2, or read directly via P:\ from a Windows context)
 
+### Cameras
+
+#### Reolink (POE, local API)
+- 4× Reolink RLC-811A (4K 8MP, AI detection)
+- 1× Reolink RLC-1224A (12MP, AI detection, higher-end)
+- All POE-powered, connected to LAN
+- IPs: TBD — assign static IPs / DHCP reservations before HA integration
+- HA integration: **Reolink** (built into HA core, no HACS needed, local API)
+- Provides: RTSP camera streams, binary sensors for AI detection categories
+  (Person, Vehicle, Pet, Package — model-dependent, both models support full set)
+- Note: ensure firmware is current on all cameras before integrating
+  (Reolink has significantly improved local API reliability in recent firmware)
+
+#### Ring Video Doorbell Pro (wired)
+- 1× Ring Video Doorbell Pro (wired, head-to-toe view, 3D motion detection)
+- Arrived 2026-06-22, not yet installed
+- HA integration: **Ring** (built into HA core, no HACS needed, cloud-based)
+- Requires: Ring account credentials + 2FA approval at setup time
+- Provides: doorbell press event, motion detection, camera stream (cloud-relayed)
+- Limitations: stream is cloud-relayed (some latency); motion zones managed in Ring app
+- Note: Ring integration requires Ring cloud — no local fallback
+
 ### Amazon Echo devices (Alexa)
 - Multiple Echo devices around the house
 - UK Amazon account (amazon.co.uk — important for Alexa integration region)
@@ -280,6 +302,9 @@ home-infra/
 │   │   └── ...
 │   └── README.md
 │
+├── cameras/
+│   └── device-inventory.md           ← camera list, IPs, HA entity IDs
+│
 ├── zwave/
 │   ├── node-map.md                   ← Z-Wave node ID → device name → location
 │   └── README.md
@@ -338,6 +363,21 @@ Tasks are roughly sequenced. Complete prerequisites before dependents.
       - Is sunroof a separate entity?
       - Exact entity IDs for: lock, doors, windows, sunroof, bonnet, tailgate
 - [ ] Update AUDI.md open questions section with findings
+
+### Phase 3a — Camera integration (Reolink + Ring)
+- [ ] Assign static IPs / DHCP reservations for all 5 Reolink cameras
+      (do this in router/AiMesh DHCP settings; document IPs in cameras/device-inventory.md)
+- [ ] Add each Reolink camera to HA via Reolink integration
+      (Settings → Integrations → Add → Reolink; enter IP, username, password per camera)
+- [ ] Verify RTSP stream visible in HA for each camera
+- [ ] Confirm AI detection binary sensors present (Person, Vehicle, Pet, Package)
+- [ ] Install Ring Doorbell Pro (physical install — when ready)
+- [ ] Add Ring integration to HA (Settings → Integrations → Add → Ring)
+      — requires Ring credentials + 2FA approval on phone during setup
+- [ ] Verify doorbell press and motion entities appear in HA
+- [ ] Note entity IDs for all cameras in cameras/device-inventory.md
+- [ ] Consider automations (e.g. driveway vehicle detected → turn on lights;
+      doorbell pressed → Alexa announcement) — draft in Phase 4
 
 ### Phase 4 — HA automations (vehicle alerts)
 - [ ] Build "Vehicle Security Check" automation in HA
@@ -400,3 +440,5 @@ Tasks are roughly sequenced. Complete prerequisites before dependents.
 - HA Alexa devices integration: https://www.home-assistant.io/integrations/alexa_devices/
 - HACS (manual install for Core/Docker): https://hacs.xyz/docs/setup/download
 - Z-Wave JS UI: https://github.com/zwave-js/zwave-js-ui
+- Reolink HA integration: https://www.home-assistant.io/integrations/reolink/
+- Ring HA integration: https://www.home-assistant.io/integrations/ring/
