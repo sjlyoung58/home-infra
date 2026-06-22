@@ -216,23 +216,19 @@ gitignored. Reference them in `.mcp.json` via environment variable substitution.
 Tasks are roughly sequenced. Complete prerequisites before dependents.
 
 ### Phase 0 — Project setup (WSL2, first session)
-- [ ] Create the directory structure above in WSL2
-- [ ] `git init`, create `.gitignore` (ignore `.env`, `*.env`, `secrets/`)
-- [ ] Create `.env.example` with all required variable names but no values
-- [ ] Push to GitHub (private repo)
+- [x] Create the directory structure above in WSL2
+- [x] `git init`, create `.gitignore` (ignore `.env`, `*.env`, `secrets/`)
+- [x] Create `.env.example` with all required variable names but no values
+- [x] Push to GitHub (private repo) — https://github.com/sjlyoung58/home-infra
 - [x] Confirm NAS IP, Pi 5 IP, Pi 3B IP — fill in this CLAUDE.md
 - [x] Confirm Portainer version number — 2.33.2 LTS, MCP pin ~=2.33.0
 
 ### Phase 1 — Populate initial context
-- [ ] Copy current Portainer stack YAML for HA container into
+- [x] Copy current Portainer stack YAML for HA container into
       `portainer/stacks/homeassistant.yml`
-- [ ] Document Z-Wave node map in `zwave/node-map.md`
-  - Connect to Z-Wave JS UI on Pi 5 (http://192.168.1.222:8091)
-  - List each node: ID, device name/type, room/location
-- [ ] Begin `openhabian/migration-status.md`:
-  - List all devices/integrations currently on OpenHabian
-  - Mark each: migrated / pending / blocked / not migrating
-- [ ] Copy `AUDI.md` (from this conversation) into `homeassistant/docs/AUDI.md`
+- [x] Document Z-Wave node map in `zwave/node-map.md`
+- [x] Begin `openhabian/migration-status.md`
+- [x] Copy `AUDI.md` into `homeassistant/docs/AUDI.md`
 
 ### Phase 2 — MCP setup (Claude Code)
 - [ ] Check whether `uvx` is available in WSL2; install if not (`pip install uv`)
@@ -277,7 +273,9 @@ Tasks are roughly sequenced. Complete prerequisites before dependents.
 
 ### Phase 5 — Z-Wave migration to HA
 - [ ] Install Z-Wave JS integration in HA (Settings → Integrations → Z-Wave JS)
-  - Point at Pi 5 Z-Wave JS WebSocket: ws://192.168.1.222:3000 (confirm port)
+  - Point at Pi 5 Z-Wave JS WebSocket: ws://192.168.1.222:3000
+  - **PREREQUISITE**: WebSocket server is currently DISABLED in Z-Wave JS UI settings
+    Must enable it first: Z-Wave JS UI → Settings → Z-Wave → Enable WS Server
   - Do NOT migrate Z-Wave JS to NAS yet — keep it on Pi 5 for now
 - [ ] Verify all Z-Wave devices appear as HA entities
 - [ ] Cross-reference against node-map.md — flag any missing devices
@@ -303,7 +301,7 @@ Tasks are roughly sequenced. Complete prerequisites before dependents.
 ## Open Questions / Decisions Pending
 
 - Whether HACS is already installed
-- Z-Wave JS WebSocket port on Pi 5 (commonly 3000 or 3001)
+- Z-Wave JS WebSocket port confirmed: 3000 — but server currently DISABLED, must enable before Phase 5
 - Alexa integration choice: official `alexa_devices` vs Alexa Media Player
   (re-evaluate at Phase 4 based on what announcement features are available)
 - Whether to eventually move Z-Wave JS from Pi 5 to NAS Docker container
