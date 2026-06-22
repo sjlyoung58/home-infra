@@ -53,11 +53,12 @@ task list (things not yet done).
 - Used for externally-facing services
 
 ### Raspberry Pi 5 (on LAN)
-- Runs Z-Wave JS (standalone, not the HA add-on)
-- Has a Z-Wave USB stick attached
-- Z-Wave JS UI accessible at http://192.168.1.222:8091 (confirm IP and port)
-- This is the Z-Wave controller for all Z-Wave devices in the house
+- Runs Z-Wave JS UI 11.5.2 (standalone Docker container, not the HA add-on)
+- Current stick: **Aeotec Z-Stick 10 Pro** (800-series) — no devices paired yet
+- Z-Wave JS UI: http://192.168.1.222:8091
+- Z-Wave JS WebSocket port: 3000 — **currently disabled**, must enable before HA integration
 - Will be integrated into HA via Z-Wave JS integration (WebSocket)
+- Also has Zigbee2MQTT running (~/ha/zigbee2mqtt) — not yet part of migration plan
 
 ### Raspberry Pi 3B (OpenHabian)
 - Running OpenHabian (OpenHAB-based home automation)
@@ -70,6 +71,56 @@ task list (things not yet done).
 - Multiple Echo devices around the house
 - UK Amazon account (amazon.co.uk — important for Alexa integration region)
 - Will be used for voice announcements from HA automations
+
+---
+
+## Z-Wave Controller Migration (Gen 5 → Z-Stick 10 Pro)
+
+### Current state
+- **Gen 5** (500-series, Aeotec): on Pi 3B, paired to entire Z-Wave network, working with OH
+- **Z-Stick 10 Pro** (800-series, Aeotec): on Pi 5, running Z-Wave JS UI, no devices paired yet
+- Z-Wave home ID on Pi 3B network: `0xde2f557d`
+
+### Why Gen 5 can't plug directly into Pi 5
+The Gen 5 has a non-compliant USB electrical behaviour: on connect it pulls D+ to +5V
+(spec requires 3.3V). Pi 4 and Pi 5 USB host controllers treat this as an invalid SE1
+state and never enumerate the device. This is a hardware issue in the stick, not a driver
+issue. **Fix: USB 2.0 hub between Pi 5 and Gen 5** — the hub absorbs the non-compliant
+pull-up. Users confirmed this works reliably on Pi 4/5.
+
+### Migration path (500-series → 800-series via Z-Wave JS UI)
+Aeotec have an official guide for this using the Z-Wave JS UI NVM backup/restore.
+Reference: https://aeotec.freshdesk.com/support/solutions/articles/6000279670
+
+Prerequisites:
+- Gen 5 firmware must be **V1.2** (check in Z-Wave JS UI controller info when connected)
+- Z-Stick 10 Pro firmware must be **V7.23.2** or later (check in Z-Wave JS UI now)
+
+Steps (when ready to cut over):
+1. Connect Gen 5 to Pi 5 via USB 2.0 hub; stop/swap Z-Wave JS from Z-Stick 10 Pro
+2. Z-Wave JS UI → Controller → NVM Backup (wait ~1 min, .bin file downloads)
+3. Swap back to Z-Stick 10 Pro
+4. Z-Wave JS UI → Controller → NVM Restore with the .bin file
+5. Enable WebSocket server, connect HA Z-Wave JS integration
+6. Verify all nodes appear in HA; cross-reference against zwave/node-map.md
+
+### Strategy: keep Gen 5 on Pi 3B until ready to cut over
+- **Do NOT put Z-Stick 10 Pro on Pi 3B** — OH 2.5.10 predates 800-series support,
+  compatibility unknown and not worth the risk
+- Gen 5 stays on Pi 3B running OH until HA is ready to go live
+- Migration is a single cutover event, not a gradual swap
+
+### Gen 5 battery / post-migration
+- Gen 5 has an internal Li-ion battery (for standalone inclusion/exclusion mode)
+- Battery auto-powers-down when unplugged and idle — won't act as a rogue controller
+- After migration, keep Gen 5 physically away from the network while verifying HA
+- Once stable: factory reset Gen 5 (hold button until LED flashes) to clear home ID
+- Gen 5 can then be kept as a spare
+
+### Immediate next step
+Connect Gen 5 to Pi 5 via USB 2.0 hub → confirm it enumerates in Z-Wave JS UI →
+check firmware version → check Z-Stick 10 Pro firmware. Do NVM backup only when
+ready to cut over to HA (don't do it prematurely while OH still needs to be live).
 
 ---
 
