@@ -5,13 +5,17 @@
 HA integration: built-in Reolink integration (no HACS). Local API, no cloud dependency.
 Add each camera individually: Settings → Integrations → Add → Reolink.
 
-| # | Model       | Location     | IP             | HA Entity prefix         | Notes                        |
+IPs confirmed by network scan (2026-06-22). All 5 respond with Reolink web UI.
+Model/location assignment TBD — log into each via browser to confirm.
+Static DHCP reservations to be set in ASUS router before HA integration.
+
+| # | Model       | Location     | Current IP     | HA Entity prefix         | Notes                        |
 |---|-------------|--------------|----------------|--------------------------|------------------------------|
-| 1 | RLC-811A    | TBD          | TBD            | TBD                      | 4K 8MP, assign static IP     |
-| 2 | RLC-811A    | TBD          | TBD            | TBD                      | 4K 8MP, assign static IP     |
-| 3 | RLC-811A    | TBD          | TBD            | TBD                      | 4K 8MP, assign static IP     |
-| 4 | RLC-811A    | TBD          | TBD            | TBD                      | 4K 8MP, assign static IP     |
-| 5 | RLC-1224A   | TBD          | TBD            | TBD                      | 12MP, assign static IP       |
+| 1 | RLC-811A?   | TBD          | 192.168.1.19   | TBD                      | Confirm model via web UI     |
+| 2 | RLC-811A?   | TBD          | 192.168.1.84   | TBD                      | Confirm model via web UI     |
+| 3 | RLC-811A?   | TBD          | 192.168.1.117  | TBD                      | Confirm model via web UI     |
+| 4 | RLC-811A?   | TBD          | 192.168.1.118  | TBD                      | Confirm model via web UI     |
+| 5 | RLC-1224A?  | TBD          | 192.168.1.159  | TBD                      | Confirm model via web UI     |
 
 ### AI Detection binary sensors (per camera)
 Once integrated, each camera exposes binary sensors for:
