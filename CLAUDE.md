@@ -53,12 +53,20 @@ task list (things not yet done).
 - Used for externally-facing services
 
 ### Raspberry Pi 5 (on LAN)
-- Runs Z-Wave JS UI 11.5.2 (standalone Docker container, not the HA add-on)
-- Current stick: **Aeotec Z-Stick 10 Pro** (800-series) — no devices paired yet
-- Z-Wave JS UI: http://192.168.1.222:8091
-- Z-Wave JS WebSocket port: 3000 — **currently disabled**, must enable before HA integration
-- Will be integrated into HA via Z-Wave JS integration (WebSocket)
-- Also has Zigbee2MQTT running (~/ha/zigbee2mqtt) — not yet part of migration plan
+- SSH: simonyoung@192.168.1.222
+- Also on WiFi at 192.168.1.223 (hostname: raspberrypi) — same machine, both interfaces active
+  Can disable WiFi (`dtoverlay=disable-wifi` in /boot/firmware/config.txt) to tidy up,
+  but nginx binds to all interfaces so web serving is unaffected either way
+
+**Services running on Pi 5:**
+- Z-Wave JS UI 11.5.2 (Docker) — http://192.168.1.222:8091
+  Current stick: Aeotec Z-Stick 10 Pro (800-series), no devices paired yet
+  WebSocket port 3000 — currently disabled, must enable before HA integration
+- nginx (Docker) — reverse proxy for Node.js dev/test apps
+  Domains: sjly.co.uk, teabc.space
+  Managed via nvm; dev/test versions of Simon's Node.js projects
+- Zigbee2MQTT (~/ha/zigbee2mqtt) — prepared but not yet running; planned for Hue bulb
+  and any future Zigbee devices via Z-Stick 10 Pro second serial port
 
 ### OpenHAB 3.4.1 (NAS Docker container) — Alexa bridge
 - Image: `openhab/openhab:3.4.1`
