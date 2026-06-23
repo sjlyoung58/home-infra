@@ -67,6 +67,9 @@ task list (things not yet done).
   Managed via nvm; dev/test versions of Simon's Node.js projects
 - Zigbee2MQTT (~/ha/zigbee2mqtt) — prepared but not yet running; planned for Hue bulb
   and any future Zigbee devices via Z-Stick 10 Pro second serial port
+- Linux games (grandchildren) — **plan to retire this use** once Pi 5 is critical HA
+  infrastructure (Z-Wave + Zigbee backbone). Alternative: Lenovo ThinkCentre (.87)
+  attached to 4K TV already used for Minecraft.
 
 ### OpenHAB 3.4.1 (NAS Docker container) — Alexa bridge
 - Image: `openhab/openhab:3.4.1`
