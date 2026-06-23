@@ -142,6 +142,38 @@ target:
   entity_id: notify.kitchen_echo_announce
 ```
 
+## Component 4: Remote vehicle control (climatisation / A/C)
+
+**Goal:** Switch A/C / pre-conditioning on remotely, including via Alexa voice command.
+
+**Same integration, extra config needed:**
+`audi_connect_ha` supports vehicle commands (not just status reads), but requires the
+**S-PIN** (myAudi security PIN, separate from account password) to be configured.
+Start with info-only (no S-PIN), add S-PIN when ready to enable commands.
+
+**PHEV note:** Pre-conditioning on a PHEV while plugged in uses **grid power, not battery**
+— especially useful for warming/cooling the cabin before a journey without range impact.
+
+**HA service call (illustrative — verify entity/service names at implementation):**
+```yaml
+service: audi_connect.execute_vehicle_action
+data:
+  vin: "<YOUR_VIN>"
+  action: climatisation_start
+```
+
+**Alexa → car A/C via virtual switch pattern:**
+Emulated Hue can't trigger HA scripts directly, but a virtual switch works:
+1. Create `input_boolean.car_ac` helper in HA
+2. Expose it to Alexa via Emulated Hue (named "Car Air Conditioning")
+3. HA automation: when `input_boolean.car_ac` turns on → call climatisation service
+   → wait X minutes or until turned off → call climatisation_stop → reset boolean
+4. Voice command: "Alexa, turn on car air conditioning"
+
+**Reliability caveat:** Commands go via Audi cloud API (same path as myAudi app).
+Command delivery is not instant and depends on the car being reachable (GSM signal).
+Same fragility as the status integration — not suitable for time-critical use.
+
 ## Open questions / to confirm during implementation
 
 - [ ] Confirm HA install method (HAOS/Supervised vs Docker) — changes HACS install steps
@@ -158,6 +190,10 @@ target:
 - [ ] Confirm Amazon account region/domain for Alexa devices (UK: amazon.co.uk)
 - [ ] Decide where the non-Alexa "warning" output lands, since Simon is handling that
       himself (dashboard card? separate notify service? logbook entry?)
+- [ ] Obtain S-PIN from myAudi app settings when ready to enable vehicle commands
+- [ ] Verify climatisation service name and parameters from audi_connect_ha at
+      implementation time (service names have changed across forks/versions)
+- [ ] Confirm pre-conditioning works correctly on PHEV when plugged in vs unplugged
 
 ## References
 
