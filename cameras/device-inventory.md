@@ -55,6 +55,33 @@ via person detection binary sensor (`binary_sensor.<name>_person`). If pursued, 
 firmware manually via Reolink app first (no auto-update available on these models).
 Note: no two-way audio in HA — Reolink app required for that.
 
+---
+
+## Frigate NVR (future consideration)
+
+Frigate is a local NVR with AI object detection that integrates natively with HA.
+More capable than Reolink's built-in detection — can do reliable person/vehicle
+detection, clip recording triggered by detection, and more precise room presence.
+Would run as a Docker container on the NAS alongside HA.
+
+**Resource caveat — NAS has no hardware ML accelerator:**
+NAS CPU: AMD Ryzen Embedded V1500B (4 cores, Zen, decent CPU — but AMD, no QuickSync).
+Frigate's object detection inference is GPU/accelerator-intensive. Without hardware
+acceleration, CPU-only inference across 5 cameras would be very heavy and likely
+too slow for real-time detection (typically 1-5 FPS per camera on CPU vs 70+ FPS
+with a Coral).
+
+**Recommended solution: Google Coral USB Accelerator (~£60)**
+- USB device, plugs into NAS
+- Passed through to Frigate container via Docker device mapping
+- Handles all ML inference in dedicated hardware — leaves NAS CPU free
+- Standard Frigate recommendation for non-GPU hosts
+- Works well with AMD hosts (inference offloaded entirely to Coral, no QuickSync needed)
+
+**Don't pursue Frigate without a Coral** — 5 POE cameras on CPU-only would saturate the NAS.
+Decide at implementation time whether the room presence / clip recording use case
+justifies the £60 Coral spend.
+
 ### Capabilities in HA
 - `camera.<name>` — RTSP stream (viewable in dashboard)
 - `binary_sensor.<name>_motion` — motion detected
