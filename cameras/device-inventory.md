@@ -71,16 +71,29 @@ acceleration, CPU-only inference across 5 cameras would be very heavy and likely
 too slow for real-time detection (typically 1-5 FPS per camera on CPU vs 70+ FPS
 with a Coral).
 
-**Recommended solution: Google Coral USB Accelerator (~£60)**
-- USB device, plugs into NAS
-- Passed through to Frigate container via Docker device mapping
-- Handles all ML inference in dedicated hardware — leaves NAS CPU free
-- Standard Frigate recommendation for non-GPU hosts
-- Works well with AMD hosts (inference offloaded entirely to Coral, no QuickSync needed)
+**Synology USB passthrough problem:**
+Google Coral USB Accelerator on Synology is a known workaround situation — the DSM
+Docker GUI doesn't expose USB passthrough at all. Workarounds require CLI container
+startup, custom Docker images, or privileged containers, and have broken across DSM
+updates. Not suitable for stable infrastructure. Don't use this approach.
 
-**Don't pursue Frigate without a Coral** — 5 POE cameras on CPU-only would saturate the NAS.
-Decide at implementation time whether the room presence / clip recording use case
-justifies the £60 Coral spend.
+**Better hosting options for Frigate:**
+
+1. **Dedicated Intel N100 mini-PC (~£150)** — Intel QuickSync built in, Frigate supports
+   it natively, no Coral needed, no USB hacks, dedicated host with no shared risk.
+   Cleanest long-term solution.
+
+2. **Pi 5 with Coral USB** — Pi 5 has proper USB Docker passthrough (no Synology caveats).
+   But Pi 5 is already critical HA infrastructure (Z-Wave, Zigbee, nginx) — adding
+   live video streams from 5 cameras is a significant extra load. Risky.
+
+3. **Pi 5 with HAILO-8L AI HAT+ (~£70)** — Raspberry Pi's M.2 AI accelerator connects
+   via PCIe (not USB), Frigate added HAILO support in 2024. Avoids USB issues but adds
+   hardware complexity to an already busy board.
+
+**Recommendation: park until after OH→HA migration is stable.** Then assess whether
+room presence / clip recording use case justifies the investment. If yes, a dedicated
+Intel N100 mini-PC is the cleanest path.
 
 ### Capabilities in HA
 - `camera.<name>` — RTSP stream (viewable in dashboard)
