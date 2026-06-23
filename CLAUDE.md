@@ -62,9 +62,9 @@ task list (things not yet done).
 - Z-Wave JS UI 11.5.2 (Docker) — http://192.168.1.222:8091
   Current stick: Aeotec Z-Stick 10 Pro (800-series), no devices paired yet
   WebSocket port 3000 — currently disabled, must enable before HA integration
-- nginx (Docker) — reverse proxy for Node.js dev/test apps
-  Domains: sjly.co.uk, teabc.space
-  Managed via nvm; dev/test versions of Simon's Node.js projects
+- Node.js dev/test apps (via nvm) — sjly.co.uk, teabc.space
+  nginx reverse proxy runs as a Docker container on the NAS, proxying to these apps on Pi 5
+- NVMe HAT fitted (uses Pi 5 PCIe slot)
 - Zigbee2MQTT (~/ha/zigbee2mqtt) — prepared but not yet running; planned for Hue bulb
   and any future Zigbee devices via Z-Stick 10 Pro second serial port
 - Linux games (grandchildren) — **plan to retire this use** once Pi 5 is critical HA

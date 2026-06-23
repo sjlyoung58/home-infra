@@ -88,8 +88,9 @@ updates. Not suitable for stable infrastructure. Don't use this approach.
    live video streams from 5 cameras is a significant extra load. Risky.
 
 3. **Pi 5 with HAILO-8L AI HAT+ (~£70)** — Raspberry Pi's M.2 AI accelerator connects
-   via PCIe (not USB), Frigate added HAILO support in 2024. Avoids USB issues but adds
-   hardware complexity to an already busy board.
+   via PCIe (not USB), Frigate added HAILO support in 2024. However Pi 5 already has an
+   NVMe HAT occupying the PCIe slot — HAILO would require removing it or a PCIe splitter
+   solution. Not practical.
 
 **Recommendation: park until after OH→HA migration is stable.** Then assess whether
 room presence / clip recording use case justifies the investment. If yes, a dedicated
