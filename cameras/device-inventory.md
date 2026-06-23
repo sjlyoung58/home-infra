@@ -5,17 +5,17 @@
 HA integration: built-in Reolink integration (no HACS). Local API, no cloud dependency.
 Add each camera individually: Settings → Integrations → Add → Reolink.
 
-IPs confirmed by network scan (2026-06-22). All 5 respond with Reolink web UI.
-Model/location assignment TBD — log into each via browser to confirm.
+IPs and details confirmed via Reolink app (2026-06-23).
 Static DHCP reservations to be set in ASUS router before HA integration.
+⚠ Firmware on all cameras is old — update via Reolink app before integrating with HA.
 
-| # | Model       | Location     | Current IP     | HA Entity prefix         | Notes                        |
-|---|-------------|--------------|----------------|--------------------------|------------------------------|
-| 1 | RLC-811A?   | TBD          | 192.168.1.19   | TBD                      | Confirm model via web UI     |
-| 2 | RLC-811A?   | TBD          | 192.168.1.84   | TBD                      | Confirm model via web UI     |
-| 3 | RLC-811A?   | TBD          | 192.168.1.117  | TBD                      | Confirm model via web UI     |
-| 4 | RLC-811A?   | TBD          | 192.168.1.118  | TBD                      | Confirm model via web UI     |
-| 5 | RLC-1224A?  | TBD          | 192.168.1.159  | TBD                      | Confirm model via web UI     |
+| # | Model      | Location      | Current IP    | Firmware              | HA Entity prefix | Notes |
+|---|------------|---------------|---------------|-----------------------|------------------|-------|
+| 1 | RLC-1224A  | Front Right   | 192.168.1.19  | v3.1.0.2174_23050816  | TBD              | 12MP — newest firmware of the POE set |
+| 2 | RLC-811A   | Front Left    | 192.168.1.84  | v3.1.0.764_21121708   | TBD              | ⚠ Firmware Dec 2021 — update first |
+| 3 | RLC-811A   | Side Alley    | 192.168.1.117 | TBD                   | TBD              | |
+| 4 | RLC-811A   | Rear Kitchen  | 192.168.1.118 | TBD                   | TBD              | |
+| 5 | RLC-811A   | Rear          | 192.168.1.158 | TBD                   | TBD              | Note: scan (2026-06-22) showed .159 with open ports — possible DHCP drift; assign static |
 
 ### AI Detection binary sensors (per camera)
 Once integrated, each camera exposes binary sensors for:
@@ -38,10 +38,10 @@ Reolink app → Device Settings → System → Firmware Upgrade.
 HA integration: same built-in Reolink integration as POE cameras.
 Currently not deployed — previously used as baby monitors for grandchildren visits.
 
-| # | Model       | Location     | IP             | HA Entity prefix | Notes                     |
-|---|-------------|--------------|----------------|------------------|---------------------------|
-| 1 | E1 Pro      | Not deployed | TBD (WiFi)     | TBD              | 5MP, pan/tilt, WiFi only  |
-| 2 | E1 Pro      | Not deployed | TBD (WiFi)     | TBD              | 5MP, pan/tilt, WiFi only  |
+| # | Model  | Location | Current IP    | Firmware             | HA Entity prefix | Notes |
+|---|--------|----------|---------------|----------------------|------------------|-------|
+| 1 | E1 Pro | Indoor1  | 192.168.1.141 | v3.0.0.716_21112404  | TBD              | ⚠ Firmware Nov 2021 — update first |
+| 2 | E1 Pro | Indoor2  | 192.168.1.168 | TBD                  | TBD              | |
 
 ### Capabilities in HA
 - `camera.<name>` — RTSP stream (viewable in dashboard)
