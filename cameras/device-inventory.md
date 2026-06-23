@@ -11,11 +11,11 @@ Static DHCP reservations to be set in ASUS router before HA integration.
 
 | # | Model      | Location      | Current IP    | Firmware              | HA Entity prefix | Notes |
 |---|------------|---------------|---------------|-----------------------|------------------|-------|
-| 1 | RLC-1224A  | Front Right   | 192.168.1.19  | v3.1.0.2174_23050816  | TBD              | 12MP — newest firmware of the POE set |
-| 2 | RLC-811A   | Front Left    | 192.168.1.84  | v3.1.0.764_21121708   | TBD              | ⚠ Firmware Dec 2021 — update first |
-| 3 | RLC-811A   | Side Alley    | 192.168.1.117 | TBD                   | TBD              | |
-| 4 | RLC-811A   | Rear Kitchen  | 192.168.1.118 | TBD                   | TBD              | |
-| 5 | RLC-811A   | Rear          | 192.168.1.158 | TBD                   | TBD              | Note: scan (2026-06-22) showed .159 with open ports — possible DHCP drift; assign static |
+| 1 | RLC-1224A  | Front Right   | 192.168.1.19  | v3.1.0.2174_23050816  | TBD              | 12MP |
+| 2 | RLC-811A   | Front Left    | 192.168.1.84  | v3.1.0.764_21121708   | TBD              | ⚠ Dec 2021 — update all RLC-811As |
+| 3 | RLC-811A   | Side Alley    | 192.168.1.117 | v3.1.0.764_21121708   | TBD              | same firmware as Front Left |
+| 4 | RLC-811A   | Rear Kitchen  | 192.168.1.118 | v3.1.0.764_21121708   | TBD              | same firmware as Front Left |
+| 5 | RLC-811A   | Rear          | 192.168.1.159 | v3.1.0.764_21121708   | TBD              | same firmware as Front Left |
 
 ### AI Detection binary sensors (per camera)
 Once integrated, each camera exposes binary sensors for:
@@ -40,8 +40,8 @@ Currently not deployed — previously used as baby monitors for grandchildren vi
 
 | # | Model  | Location | Current IP    | Firmware             | HA Entity prefix | Notes |
 |---|--------|----------|---------------|----------------------|------------------|-------|
-| 1 | E1 Pro | Indoor1  | 192.168.1.141 | v3.0.0.716_21112404  | TBD              | ⚠ Firmware Nov 2021 — update first |
-| 2 | E1 Pro | Indoor2  | 192.168.1.168 | TBD                  | TBD              | |
+| 1 | E1 Pro | Indoor1  | 192.168.1.141 | v3.0.0.716_21112404  | TBD              | ⚠ Nov 2021 — update both E1 Pros |
+| 2 | E1 Pro | Indoor2  | 192.168.1.168 | v3.0.0.716_21112404  | TBD              | same firmware as Indoor1 |
 
 ### Capabilities in HA
 - `camera.<name>` — RTSP stream (viewable in dashboard)
