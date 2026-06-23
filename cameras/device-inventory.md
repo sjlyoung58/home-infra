@@ -46,8 +46,14 @@ Currently not deployed — previously used as baby monitors for grandchildren vi
 |---|--------|----------|---------------|-------------------|----------------------|------------------|-------|
 | # | Model  | Location | IP (static)   | MAC               | Firmware             | HA Entity prefix | Notes |
 |---|--------|----------|---------------|-------------------|----------------------|------------------|-------|
-| 1 | E1 Pro | Indoor1  | 192.168.1.141 | 60:FB:00:9A:1A:5C | v3.0.0.716_21112404  | TBD              | ⚠ Nov 2021 firmware — update |
-| 2 | E1 Pro | Indoor2  | 192.168.1.168 | 60:FB:00:9A:2B:A0 | v3.0.0.716_21112404  | TBD              | ⚠ update firmware |
+| 1 | E1 Pro | Indoor1  | 192.168.1.141 | 60:FB:00:9A:1A:5C | v3.0.0.716_21112404  | TBD              | No auto-update; manual update needed before use |
+| 2 | E1 Pro | Indoor2  | 192.168.1.168 | 60:FB:00:9A:2B:A0 | v3.0.0.716_21112404  | TBD              | No auto-update; manual update needed before use |
+
+**E1 Pro status: low priority / deferred**
+Not planned for initial HA integration. Potential future use: room presence detection
+via person detection binary sensor (`binary_sensor.<name>_person`). If pursued, update
+firmware manually via Reolink app first (no auto-update available on these models).
+Note: no two-way audio in HA — Reolink app required for that.
 
 ### Capabilities in HA
 - `camera.<name>` — RTSP stream (viewable in dashboard)
