@@ -10,33 +10,36 @@
 ## Floor Plan
 
 ```
-                    SOUTH (property boundary)
-                             ↑
-  E  ┌──────────┬────────────┬──────────────────────┐
-(Fr) │          │  Walk-in   │   En-Suite            │
- O   │ Main Bed │  Wardrobe  ├──────────────────────┤
- N   │          │  [NAS]  G E│                      │
- T   ├──────────┤            │       Lounge          │
- /   │          │            │                      │
- R   │Middle Bed│   Dining   │                      │
- O   │ [Comms]  │            ├──────────────────────┤
- A   │          │            │                      │
- D   ├───┬──────┤            │    Conservatory       │
- )   │Pch│ Hall │            │                      │
-     ├───┴──────┤            │                      │
-  W  │          │            ├──────────────────────┤
-(Re) │  Study   │Bath│Kitchen│        [Cupboard]    │
-  ar └──────────┴────┴───────┴──────────────────────┘
-  G            ↓
-  a)        NORTH  (side alley along north boundary)
+                       SOUTH (property boundary)
+                                ↑
+  E   ┌──────────┬─────────────┬────────┬──────────┐
+(Fr)  │          │  Walk-in    │En-Suite│          │
+  O   │ Main Bed │  Wardrobe   │        │  Lounge  │
+  N   │          │  [NAS]      │        │  (5×5m)  │
+  T   │          ├──────┬──────┘        │          │
+  /   ├──────────┤  G   │  E            │          │
+  R   │          │      │               ├──────────┤
+  O   │Middle Bed│      Dining          │          │
+  A   │ [Comms]  │                      │Conserv-  │
+  D   │          │                      │atory     │
+  )   ├───┬──────┤                      │  (5×5m)  │
+      │Pch│ Hall │                      │          │
+      ├───┴──────┤                      │          │
+  W   │          │        │             └──────────┘
+(Re)  │  Study   │  Bath  │  Kitchen
+  ar  │          │        │  (faces W → rear garden)
+  G   └──────────┴────────┴──────────────
+  )              ↓
+              NORTH  (side alley along north boundary)
 
-  G = gas meter    E = elec meter    Pch = Porch
-  [NAS] = Synology NAS in walk-in wardrobe
+  G = gas meter   E = elec meter   Pch = Porch
+  [NAS] = Synology NAS in walk-in wardrobe (south extension)
   [Comms] = comms cupboard in middle bedroom
+  Walk-in + En-Suite run along south boundary (later extension)
   Zappi EV charger on outside east (front) wall
 ```
 
-> Derived from hand-drawn sketch — proportions approximate.
+> Derived from hand-drawn sketch — refine as needed.
 
 ---
 
