@@ -242,22 +242,32 @@ Powered Thread bulbs act as Thread mesh routers — extend coverage from conserv
   Wall switch 3 on the 3-gang plate feeds this relay's switch input
 - 4 bulbs: on 2 physical switches (2+2) on the 3-gang plate — Aqara T2 to take these over
 
+**Smart bulb model — important:**
+With Thread GU10s, "off" = brightness 0% (bulb still powered, still on Thread network).
+Relays must stay permanently closed. Cutting power = bulbs drop off Thread network (bad).
+Current Z-Wave toggle behaviour (relay cuts power on switch press) is **wrong** for this.
+
 **Plan with Aqara T2 + Thread bulbs:**
 - T2 Ch1 relay → permanent ON (powers 2 Thread GU10s)
 - T2 Ch2 relay → permanent ON (powers 2 Thread GU10s)
 - T2 switch inputs in **decoupled mode** — wall switches send Zigbee signal to HA,
   HA controls Thread bulbs (sub-1s latency, feels like a normal switch)
-- Existing Z-Wave relay: set to **permanent ON / pulse input mode** (Qubino parameter config)
-  Wall switch 3 sends Z-Wave signal to HA → HA controls the other 4 Thread bulbs
+
+**The 4 bulbs on existing Qubino Z-Wave relay — decision needed:**
+The current toggle mode cuts power on every switch press. This is incompatible with
+Thread bulbs. Options:
+1. **Replace Qubino with a second Aqara T2** (recommended): gives proper decoupled mode,
+   no power cuts, consistent with the other 4 bulbs. Requires re-wiring in loft.
+2. **Qubino workaround**: lock relay permanently ON via HA, configure switch input to
+   send Z-Wave Central Scene notification. HA immediately restores relay if it toggles.
+   Risk: brief power cut on each press may cause bulbs to blink and dropout Thread briefly.
+Decision: defer until installation — assess Qubino parameter options in Z-Wave JS first;
+buy a second T2 if the workaround proves unreliable.
 
 **Physical fallback (design decision):**
-Julie requires physical switch control. In decoupled mode, switches work whenever HA is up.
-This is acceptable because: (a) Alexa has the same HA dependency anyway, and (b) HA on NAS
-with UPS is highly reliable. Emergency fallback if HA is down: hard-cut the circuit at the
-fuse to hard-reset bulbs (they return to default-on at full brightness when power restored).
-
-**Do not run smart bulbs in relay-switching mode** (relay actually cuts power):
-bulbs drop off Thread network when power cut, lose colour/brightness state on restore.
+In decoupled mode, switches work whenever HA is up. Acceptable because Alexa has the
+same HA dependency. Emergency fallback if HA is down: cut circuit at fuse — bulbs return
+to default-on at full brightness when power restored. HA on NAS with UPS = very reliable.
 
 #### Smart devices (existing)
 - Ventec 100 window controller (230V, 3-wire actuator — brown=open, black=close, blue=N)
