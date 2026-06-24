@@ -141,10 +141,20 @@ task list (things not yet done).
 
 ## Z-Wave Controller Migration (Gen 5 → Z-Stick 10 Pro)
 
-### Current state
-- **Gen 5** (500-series, Aeotec): on Pi 3B, paired to entire Z-Wave network, working with OH
-- **Z-Stick 10 Pro** (800-series, Aeotec): on Pi 5, running Z-Wave JS UI, no devices paired yet
-- Z-Wave home ID on Pi 3B network: `0xde2f557d`
+### Current state — three sticks, one decision
+- **Gen 5** (500-series): on Pi 3B, paired to entire Z-Wave network, working with OH
+- **Gen 5+** (500-series): never used, in box — same generation as Gen 5, same USB issue
+- **Z-Stick 10 Pro** (800-series, dual Z-Wave+Zigbee): on Pi 5, running Z-Wave JS UI, no devices paired
+
+Z-Wave home ID on Pi 3B network: `0xde2f557d`
+
+### Decision: use Z-Stick 10 Pro as final coordinator
+- **Rationale**: already in place; no USB hub required on Pi 5; 800-series is more capable
+  (Z-Wave Long Range support, better S2); no reason to step down to 500-series
+- **Gen 5+**: sell (never used, good condition) rather than Z-Stick 10 Pro
+- **Alternative considered**: Gen 5+ would give simpler 500→500 NVM migration, and
+  Z-Stick 10 Pro sells for more — but USB hub requirement would be permanent on Pi 5,
+  and 800-series is better hardware to be running long-term
 
 ### Why Gen 5 can't plug directly into Pi 5
 The Gen 5 has a non-compliant USB electrical behaviour: on connect it pulls D+ to +5V

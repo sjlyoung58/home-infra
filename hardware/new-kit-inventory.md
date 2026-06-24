@@ -20,11 +20,24 @@ Zigbee + Thread coordinator with better signal coverage across the bungalow.
 | Mercusys MS105GP | **[bought]** | 5-port Gigabit PoE+ switch, 65W, ~£18. TP-Link sub-brand. Used to power MR4 and anything else in the loft. |
 
 ### Plan
-- Mount MR4 in loft, centrally placed for line-of-sight coverage through ceilings
 - PoE via Mercusys switch (MR4 draws only ~1.5W)
-- Caution: foil-backed loft insulation can block Zigbee — mount MR4 **below** the foil
+- Caution: foil-backed loft insulation can block Zigbee — if loft is used, mount MR4 **below** the foil
 - HA integration: Zigbee2MQTT (preferred for Aqara compatibility) or ZHA
 - MR4 also acts as Thread Border Router for future Matter-over-Thread devices
+
+### ⚠ Loft placement under review — heat concern
+MR4 operating temperature limit: **40°C**. UK loft in summer can easily exceed this.
+A max/min thermometer has been placed in the loft during a June 2026 heatwave to measure
+actual conditions before committing to loft mounting. Check reading before installing.
+
+If loft temperature regularly exceeds 35°C (to give some headroom):
+- **Alternative A**: Mount on ceiling just below the loft hatch — same central position,
+  accessed via hatch, but cooler side of insulation
+- **Alternative B**: High-up central location in a hallway or landing — still PoE,
+  still good coverage, no heat risk
+- Both alternatives still PoE-powered via cable run from Mercusys switch in loft
+
+Decision pending thermometer reading.
 
 ### HA config (when ready)
 ```yaml
