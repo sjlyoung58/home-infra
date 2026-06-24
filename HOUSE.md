@@ -237,32 +237,27 @@ Features: Ventec 100 window controller (to be replaced with Shelly 2PM Gen 4).
 Will pair via HA Matter integration using MR4 as Thread Border Router.
 Powered Thread bulbs act as Thread mesh routers — extend coverage from conservatory outward.
 
-**Current wiring** (3-gang wall switch plate + existing Z-Wave relay):
-- 4 bulbs: already on existing Z-Wave relay (Qubino Flush 2 Relays ch — node TBC)
-  Wall switch 3 on the 3-gang plate feeds this relay's switch input
-- 4 bulbs: on 2 physical switches (2+2) on the 3-gang plate — Aqara T2 to take these over
-
 **Smart bulb model — important:**
 With Thread GU10s, "off" = brightness 0% (bulb still powered, still on Thread network).
 Relays must stay permanently closed. Cutting power = bulbs drop off Thread network (bad).
-Current Z-Wave toggle behaviour (relay cuts power on switch press) is **wrong** for this.
+Z-Wave toggle behaviour (relay cuts power on switch press) is incompatible with this.
 
-**Plan with Aqara T2 + Thread bulbs:**
-- T2 Ch1 relay → permanent ON (powers 2 Thread GU10s)
-- T2 Ch2 relay → permanent ON (powers 2 Thread GU10s)
-- T2 switch inputs in **decoupled mode** — wall switches send Zigbee signal to HA,
-  HA controls Thread bulbs (sub-1s latency, feels like a normal switch)
+**Current wiring** (3-gang wall switch plate):
+- Switch 1: 2 GU10 bulbs (physical only)
+- Switch 2: 2 GU10 bulbs (physical only)
+- Switch 3: 4 GU10 bulbs via existing Qubino Flush 2 Relays (Z-Wave, node TBC)
 
-**The 4 bulbs on existing Qubino Z-Wave relay — decision needed:**
-The current toggle mode cuts power on every switch press. This is incompatible with
-Thread bulbs. Options:
-1. **Replace Qubino with a second Aqara T2** (recommended): gives proper decoupled mode,
-   no power cuts, consistent with the other 4 bulbs. Requires re-wiring in loft.
-2. **Qubino workaround**: lock relay permanently ON via HA, configure switch input to
-   send Z-Wave Central Scene notification. HA immediately restores relay if it toggles.
-   Risk: brief power cut on each press may cause bulbs to blink and dropout Thread briefly.
-Decision: defer until installation — assess Qubino parameter options in Z-Wave JS first;
-buy a second T2 if the workaround proves unreliable.
+**Planned wiring — 2 × Aqara T2 Dual Relay (all channels in decoupled mode):**
+
+| T2 unit | Channel | Controls | Switch input |
+|---------|---------|----------|-------------|
+| T2 #1 | Ch1 | 2 × Thread GU10 | 3-gang switch 1 |
+| T2 #1 | Ch2 | 2 × Thread GU10 | 3-gang switch 2 |
+| T2 #2 | Ch1 | Garden Floodlight | Existing manual switch (replaces dead node 16 ch1) |
+| T2 #2 | Ch2 | 4 × Thread GU10 | 3-gang switch 3 (replaces Qubino Z-Wave relay) |
+
+All 3 switches in the group use the same T2 type → consistent decoupled mode behaviour
+across the whole plate. Garden floodlight regains smart control (lost when node 16 died).
 
 **Physical fallback (design decision):**
 In decoupled mode, switches work whenever HA is up. Acceptable because Alexa has the
@@ -275,7 +270,7 @@ to default-on at full brightness when power restored. HA on NAS with UPS = very 
 
 #### Smart devices (planned — [new kit inventory](hardware/new-kit-inventory.md))
 - SLZB-MR4: Zigbee + Thread coordinator (PoE, placed in conservatory)
-- Aqara Dual Relay T2 (DCM-K01): controls 4 GU10 bulbs via 2 channels, decoupled mode
+- 2 × Aqara Dual Relay T2 (DCM-K01): see wiring table above (all in decoupled mode)
 - Shelly Plus 2PM Gen 4: replacing Ventec 100 for window control (cover mode)
 - Tuya ZY-M100 mmWave presence sensor: mounted angled in wall box (55mm deep)
 - HLK-PM01 5V PSU: powers presence sensor from mains in wall box

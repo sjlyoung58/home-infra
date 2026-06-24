@@ -33,7 +33,7 @@ WebSocket server must be enabled first — see zwave/node-map.md.
 | 13 | Lounge Std Lamp | Lounge | pending | |
 | 14 | Lounge Desk Lamp | Lounge | pending | |
 | 15 | Cons Bird | Conservatory | pending | |
-| 16 | **DEAD** Back Garden Relays | Back Garden | skip (for now) | Z-Wave switch failed. Ch1 (Garden Floodlight) → manual 2-way switch, plan to revive. Ch2 (Side Soffits) → wired in series with Rear Soffits (node 20 ch1). Revive as new device when replaced. |
+| 16 | **DEAD** Back Garden Relays | Back Garden | pending | Z-Wave switch failed. Ch1 (Garden Floodlight) → being replaced by Aqara T2 #2 Ch1 (Zigbee, decoupled mode) — smart control restored. Ch2 (Side Soffits) → remains wired in series with Rear Soffits (node 20 ch1), no independent control planned. |
 | 17 | (Decommissioned) | — | skip | Replaced by node 20 |
 | 18 | Lounge Mantlepiece | Lounge | pending | |
 | 20 | Rear Soffits / Cons Centre | Back Garden/Conservatory | pending | 2-channel relay |
@@ -164,7 +164,7 @@ Source of truth: `openhabian/oh341-config/default.items` (OH 3.4.1 Alexa bridge 
 - Siren (node 3) — obviously
 - Dining Room Dimmer (Hue) — never voice-controlled; Hue bridge can be retired
 
-**Garden Floodlight — notification instead of auto-off (when node 16 revived):**
+**Garden Floodlight — notification instead of auto-off (via Aqara T2 #2 Ch1):**
 OH had `expire="3m,command=OFF"` — use case is letting the dog out at night and forgetting
 to turn the light off. Preferred HA approach: notification after N minutes rather than
 auto-off, so there's a reminder without the light cutting out unexpectedly.
