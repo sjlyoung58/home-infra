@@ -10,37 +10,35 @@
 ## Floor Plan
 
 ```
-                       SOUTH (property boundary)
-                                ↑
-  E   ┌────────────────┬────────────────┬────────────┐
-(Fr)  │                │Walk-in Wardrobe│            │
-      |                |  [NAS]┌────────┤            |  
-      │                └───────├        |            │
-      │                        │        │            │
-  O   │ Main Bed               │En-Suite│    Lounge  │
-  N   │               G      E │        │    (5×5m)  │
-  T   │          ┌──────┬──────┴────────┤            │
-  /   ├──────────┤                      ├────────────┤
-  R   │          │                      │            │
-  O   │Middle Bed│      Dining          │            │
-  A   │ [Comms]  │                      │Conservatory│
-  D   │          │                      │   (5×5m)   │
-  )   ├───┬──────┤                      |            |
-      ├───┴──────┤                      └────────────┘
-      │Pch│ Hall │                      |
-      ├───┴───────────┬───┤─────────────│
-  W   │          │        │             |
-(Re)  │  Study   │  Bath  │  Kitchen    |
-  ar  │          │        │  (faces W → rear garden)
-  G   └──────────┴────────┴──────────────
-  )              ↓
-              NORTH  (side alley along north boundary)
+                               SOUTH (property boundary)
+                                        
+                 ┌───────────┬──────────────┬──────────────────┐
+   C(Front Right)│           │  WIW         |                  |C(Rear)
+                 |  Main Bed |  [NAS]┌──────┤    Lounge        |  
+                 │           └───────┤En-   |    5×5(m)        │
+                 │               G  E│Suite │                  │              ┌────────────┐
+EAST             ├─────────────┌─────┴──────┤               R2 │              |            |
+                 │             │R3          ├──────────────────┤    WEST      |  Summer-   |
+           Zappi │Middle Bed.  │   Dining   |                  │              |   House    |
+                 │ [Comms]   R1│                Conservatory   │              |            |
+                 ├─────────────┤                   (5×5m)      │              └────────────┘
+           ┌─────├             |                               |
+    Virgin │Porch│   Hall      |            |                  |
+           ├─────┴────┬────────┴─┬──────────┴──────────────────┘
+           │          │          │          |                 C(Rear Kitchen)
+   (Front  │Study/Bed3│  Bath    │ Kitchen  |
+     Left)C│          │          │          |
+           └──────────┴──────────┴──────────┘
+            C(side Alley)
+                 NORTH  (side alley along north boundary)
 
-  G = gas meter   E = elec meter   Pch = Porch
+  R1 = RT-AC86u   R2 = RT-AX56U (Mesh)  R3 = RP-AX56 (Mesh)
+  G = gas meter   E = elec meter  WIW = Walk-in Wardrobe
   [NAS] = Synology NAS in walk-in wardrobe (south extension)
   [Comms] = comms cupboard in middle bedroom
   Walk-in + En-Suite run along south boundary (later extension)
   Zappi EV charger on outside east (front) wall
+  C - Reolink Camera
 ```
 
 > Derived from hand-drawn sketch — refine as needed.
@@ -113,7 +111,7 @@ Voltage was a red herring. App retained as passive monitoring but no longer diag
 - Hive Hub (heating control)
 - MyEnergi Hub
 - Philips Hue Bridge (to be retired — see [camera inventory](cameras/device-inventory.md))
-- RT-AC68U router (AiMesh node — thick west wall requires 2 mesh nodes at rear)
+- RT-AC86U router (AiMesh node — thick west wall requires 2 mesh nodes at rear)
 
 ### NAS location
 - Synology NAS in walk-in wardrobe off main bedroom, with APC UPS backup
