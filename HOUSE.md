@@ -110,8 +110,8 @@ Voltage was a red herring. App retained as passive monitoring but no longer diag
 - Many ethernet cables from loft entering through ceiling to RJ45 sockets in rooms
 - Hive Hub (heating control)
 - MyEnergi Hub
-- Philips Hue Bridge (to be retired — see [camera inventory](cameras/device-inventory.md))
-- RT-AC86U router (AiMesh node — thick west wall requires 2 mesh nodes at rear)
+- Philips Hue Bridge (to be retired — see [migration status](openhabian/migration-status.md))
+- RT-AC86U — primary AiMesh router (thick west wall requires 2 satellite nodes at rear: RT-AX56U + RP-AX56)
 
 ### NAS location
 - Synology NAS in walk-in wardrobe off main bedroom, with APC UPS backup
