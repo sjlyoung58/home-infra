@@ -107,8 +107,8 @@ Voltage was a red herring. App retained as passive monitoring but no longer diag
 ### Comms Cupboard (in Middle Bedroom)
 - 10-port unmanaged switch (main LAN distribution)
 - 4-port PoE switch (4 × Reolink RLC-811A — full)
-- Single PoE injector (5th Reolink camera — repurposed from replaced Hikvision; which camera TBC)
-  Plan: move to Mercusys PoE switch in loft once that's installed
+- Single PoE injector (RLC-1224A "Front Right" — repurposed from replaced Hikvision)
+  Plan: move to Mercusys PoE switch once location is decided (loft ruled out — see below)
 - Many ethernet cables from loft entering through ceiling to RJ45 sockets in rooms
 - Hive Hub (heating control)
 - MyEnergi Hub

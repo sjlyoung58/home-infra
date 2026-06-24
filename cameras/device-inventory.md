@@ -15,7 +15,7 @@ Static DHCP reservations to be set in ASUS router before HA integration.
 |---|------------|---------------|---------------|-------------------|-----------------------|------------------|-------|
 | # | Model      | Location      | IP (static)   | MAC               | Firmware              | HA Entity prefix | Notes |
 |---|------------|---------------|---------------|-------------------|-----------------------|------------------|-------|
-| 1 | RLC-1224A  | Front Right   | 192.168.1.19  | EC:71:DB:64:A9:36 | v3.1.0.2174_23050816  | TBD              | 12MP; auto-update on; confirmed latest |
+| 1 | RLC-1224A  | Front Right   | 192.168.1.19  | EC:71:DB:64:A9:36 | v3.1.0.2174_23050816  | TBD              | 12MP; powered by repurposed Hikvision PoE injector (not on 4-port switch) |
 | 2 | RLC-811A   | Front Left    | 192.168.1.84  | EC:71:DB:60:B5:BB | v3.1.0.764_21121708   | TBD              | auto-update on; confirmed latest |
 | 3 | RLC-811A   | Side Alley    | 192.168.1.117 | EC:71:DB:AD:74:47 | v3.1.0.764_21121708   | TBD              | auto-update on; confirmed latest |
 | 4 | RLC-811A   | Rear Kitchen  | 192.168.1.118 | EC:71:DB:BD:C2:5D | v3.1.0.764_21121708   | TBD              | auto-update on; confirmed latest |

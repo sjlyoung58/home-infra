@@ -25,19 +25,24 @@ Zigbee + Thread coordinator with better signal coverage across the bungalow.
 - HA integration: Zigbee2MQTT (preferred for Aqara compatibility) or ZHA
 - MR4 also acts as Thread Border Router for future Matter-over-Thread devices
 
-### ⚠ Loft placement under review — heat concern
-MR4 operating temperature limit: **40°C**. UK loft in summer can easily exceed this.
-A max/min thermometer has been placed in the loft during a June 2026 heatwave to measure
-actual conditions before committing to loft mounting. Check reading before installing.
+### ⚠ Loft placement ruled out — heat
+MR4 operating temperature limit: **40°C**. Loft thermometer confirmed temperatures
+during June 2026 heatwave exceed safe operating range. Loft is not a viable location.
 
-If loft temperature regularly exceeds 35°C (to give some headroom):
-- **Alternative A**: Mount on ceiling just below the loft hatch — same central position,
-  accessed via hatch, but cooler side of insulation
-- **Alternative B**: High-up central location in a hallway or landing — still PoE,
-  still good coverage, no heat risk
-- Both alternatives still PoE-powered via cable run from Mercusys switch in loft
+**Decided: MR4 will NOT go in the loft.**
 
-Decision pending thermometer reading.
+Alternative placement options (all still PoE-powered):
+- **Central hallway, high on wall** — good all-round coverage in a bungalow
+- **Below loft hatch on ceiling** — central position, cooler side of insulation
+- PoE cable still run from Mercusys switch (wherever that ends up) or a PoE injector
+
+### Mercusys MS105GP placement — also reconsidered
+Originally planned for the loft to power the MR4. Since MR4 is no longer going in the
+loft, Mercusys placement is TBD. Options:
+- Follow MR4 to wherever it ends up (powers MR4 + potentially RLC-1224A camera)
+- Stay in comms cupboard if a cable run to MR4 location is practical
+- RLC-1224A "Front Right" currently on a repurposed Hikvision PoE injector — could
+  move to Mercusys once location is settled, freeing up the injector
 
 ### HA config (when ready)
 ```yaml
