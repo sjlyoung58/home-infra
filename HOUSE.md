@@ -61,7 +61,26 @@
 | MyEnergi Hub | Comms cupboard | Links Zappi + Harvi to cloud/HA |
 | Electric meter | Main bedroom (meter cpbd) | Gen 1 smart meter, not functioning smart |
 
-Potential HA integration: MyEnergi has a HA integration (`myenergi` / HACS). Not yet set up.
+### zappimon (existing Node.js app)
+- Location: `../zappimon` (sibling project, not in this repo)
+- Polls MyEnergi API every 30 seconds via `myenergi-api` npm package
+- Logs: voltage (calibrated against Fluke meter), solar kW, grid kW, EV charge kW,
+  calculated house consumption (solar + grid − charge), min/max voltage session tracking
+- Description says "persist data for historical analysis" — persistence not yet built;
+  currently logs to console/zappi.log only
+- Credentials hardcoded in `src/main.mjs` — fine for private local use, don't expose
+
+### HA integration (planned)
+- `myenergi` integration (built into HA core) — reads Zappi and Harvi as HA entities
+- Would give: solar generation sensor, grid import/export sensor, Zappi charge mode,
+  surplus solar available → useful for automations (e.g. boost hot water when exporting)
+- zappimon could be retired or extended to push to HA via webhook/MQTT once HA is live
+
+### Hive (heating)
+- Hive Hub in comms cupboard controls central heating/hot water
+- Currently controlled via Alexa skill only ("Alexa, ask Hive to boost the hot water")
+- HA integration: `hive` (available via HACS) — add later, not a migration priority
+- No change needed to Alexa Hive skill — it's independent of the OH→HA migration
 
 ---
 
