@@ -70,6 +70,13 @@
   currently logs to console/zappi.log only
 - Credentials hardcoded in `src/main.mjs` — fine for private local use, don't expose
 
+**Origin / backstory:** Built ~2 years ago to diagnose intermittent Zappi faults. Voltage
+fluctuation was the suspected cause (hence the Fluke calibration factor). MyEnergi
+requested an electrician measure voltage inside the unit; the real fault was a loose ribbon
+cable between the display PCB and main PCB — almost certainly loose since original
+installation and gradually working free over 2-3 years. Reseating the cable fixed it.
+Voltage was a red herring. App retained as passive monitoring but no longer diagnostic.
+
 ### HA integration (planned)
 - `myenergi` integration (built into HA core) — reads Zappi and Harvi as HA entities
 - Would give: solar generation sensor, grid import/export sensor, Zappi charge mode,
