@@ -253,7 +253,7 @@ Z-Wave toggle behaviour (relay cuts power on switch press) is incompatible with 
 |---------|---------|----------|-------------|
 | T2 #1 | Ch1 | 2 × Thread GU10 | 3-gang switch 1 |
 | T2 #1 | Ch2 | 2 × Thread GU10 | 3-gang switch 2 |
-| T2 #2 | Ch1 | Garden Floodlight | Existing manual switch (replaces dead node 16 ch1) |
+| T2 #2 | Ch1 | Garden Floodlight | 2 × 2-way switches (T2 S1 sees the 2-way output — transparent, either switch works) |
 | T2 #2 | Ch2 | 4 × Thread GU10 | 3-gang switch 3 (replaces Qubino Z-Wave relay) |
 
 All 3 switches in the group use the same T2 type → consistent decoupled mode behaviour
