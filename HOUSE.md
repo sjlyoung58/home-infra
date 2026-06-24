@@ -219,23 +219,53 @@ No loft access (solid foam insulation).
 ---
 
 ### Conservatory
-**Description:** Rear extension, flat roof, 5m × 5m, adjoining lounge. Glass.
+**Description:** Rear extension, flat roof, 5m × 5m, adjoining lounge. Glass walls.
 Features: Ventec 100 window controller (to be replaced with Shelly 2PM Gen 4).
+**Planned MR4 location** — glass walls ideal for Zigbee/Thread signal in all directions.
 
-#### Lighting (Z-Wave, all via OH group `GF_Conservatory`)
+#### Lighting — current (Z-Wave, via OH group `GF_Conservatory`)
 | Node | Alexa name | Device | Notes |
 |------|-----------|--------|-------|
 | 4 | Garden Globe | Qubino smart plug | |
 | 11 | String Lights | Qubino smart plug | |
 | 12 | Kitchen Globe | Qubino smart plug | Near kitchen side |
 | 15 | Bird | Qubino smart plug | Decorative |
-| 20 ch2 | Centre Lights | Qubino Flush 2 Relays | Via wall switch |
+| 20 ch2 | Centre Lights | Qubino Flush 2 Relays ch2 | Wall switch input |
+
+#### Lighting — planned (8 × IKEA GU10 Thread bulbs)
+8 GU10 ceiling spots to be replaced with **IKEA multicolour GU10 Thread bulbs** (Matter-over-Thread).
+Will pair via HA Matter integration using MR4 as Thread Border Router.
+Powered Thread bulbs act as Thread mesh routers — extend coverage from conservatory outward.
+
+**Current wiring** (3-gang wall switch plate + existing Z-Wave relay):
+- 4 bulbs: already on existing Z-Wave relay (Qubino Flush 2 Relays ch — node TBC)
+  Wall switch 3 on the 3-gang plate feeds this relay's switch input
+- 4 bulbs: on 2 physical switches (2+2) on the 3-gang plate — Aqara T2 to take these over
+
+**Plan with Aqara T2 + Thread bulbs:**
+- T2 Ch1 relay → permanent ON (powers 2 Thread GU10s)
+- T2 Ch2 relay → permanent ON (powers 2 Thread GU10s)
+- T2 switch inputs in **decoupled mode** — wall switches send Zigbee signal to HA,
+  HA controls Thread bulbs (sub-1s latency, feels like a normal switch)
+- Existing Z-Wave relay: set to **permanent ON / pulse input mode** (Qubino parameter config)
+  Wall switch 3 sends Z-Wave signal to HA → HA controls the other 4 Thread bulbs
+
+**Physical fallback (design decision):**
+Julie requires physical switch control. In decoupled mode, switches work whenever HA is up.
+This is acceptable because: (a) Alexa has the same HA dependency anyway, and (b) HA on NAS
+with UPS is highly reliable. Emergency fallback if HA is down: hard-cut the circuit at the
+fuse to hard-reset bulbs (they return to default-on at full brightness when power restored).
+
+**Do not run smart bulbs in relay-switching mode** (relay actually cuts power):
+bulbs drop off Thread network when power cut, lose colour/brightness state on restore.
 
 #### Smart devices (existing)
 - Ventec 100 window controller (230V, 3-wire actuator — brown=open, black=close, blue=N)
   Rain sensor on this unit failed ~2 years ago
 
 #### Smart devices (planned — [new kit inventory](hardware/new-kit-inventory.md))
+- SLZB-MR4: Zigbee + Thread coordinator (PoE, placed in conservatory)
+- Aqara Dual Relay T2 (DCM-K01): controls 4 GU10 bulbs via 2 channels, decoupled mode
 - Shelly Plus 2PM Gen 4: replacing Ventec 100 for window control (cover mode)
 - Tuya ZY-M100 mmWave presence sensor: mounted angled in wall box (55mm deep)
 - HLK-PM01 5V PSU: powers presence sensor from mains in wall box
