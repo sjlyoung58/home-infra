@@ -182,9 +182,10 @@ Contains walk-in wardrobe (NAS location), ensuite bathroom/shower.
 - Conservatory Kitchen Globe: Z-Wave node 12 (Qubino smart plug, "Kitchen Globe" in Alexa)
   — note: despite the name, this plug is physically in/near the kitchen
 - **Sylstar 24W Smart LED Ceiling Light**: Tuya/Smart Life compatible, not yet integrated
-  Currently on a simple on/off switch. Protocol TBC — check Smart Life app (WiFi or Zigbee?)
-  - If **Zigbee**: pair directly to MR4 via Zigbee2MQTT — cleanest path
-  - If **WiFi**: Tuya local integration in HA (requires local key extraction)
+  Currently on a simple on/off switch. Believed to be **WiFi** (never successfully paired
+  to Smart Life app). To confirm: put in pairing mode (typically 3-5× on/off cycles until
+  light flashes), then pair via Smart Life app to identify protocol and get device online.
+  - **WiFi**: Tuya local integration in HA (requires local key extraction once paired)
   - Either way: needs always-powered (smart light must not lose power)
   - Switch options: T2 channel (decoupled mode) OR Sonoff ZBMINI-L2 behind existing switch
     (ZBMINI-L2 simpler if no other relay channel needed in kitchen; no neutral required)
