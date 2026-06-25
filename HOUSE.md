@@ -19,7 +19,7 @@
                  │               G  E│Suite │                  │              ┌────────────┐
 EAST             ├─────────────┌─────┴──────┤               R2 │              |            |
                  │             │R3          ├──────────────────┤    WEST      |  Summer-   |
-           Zappi │Middle Bed.  │   Dining   |                  │              |   House    |
+           Zappi │Middle Bed   │   Dining   |                  │              |   House    |
                  │ [Comms]   R1│                Conservatory   │              |            |
                  ├─────────────┤                   (5×5m)      │              └────────────┘
            ┌─────├             |                               |
@@ -39,6 +39,7 @@ EAST             ├─────────────┌─────┴
   Walk-in + En-Suite run along south boundary (later extension)
   Zappi EV charger on outside east (front) wall
   C - Reolink Camera
+  Virgin Hub 5x in Porch
 ```
 
 > Derived from hand-drawn sketch — refine as needed.
@@ -175,13 +176,18 @@ Contains walk-in wardrobe (NAS location), ensuite bathroom/shower.
 ---
 
 ### Kitchen
-**Description:** TBC — position approximate, see floor plan.
+**Description:** North-west area, windows face rear garden (west).
 
 #### Lighting
 - Conservatory Kitchen Globe: Z-Wave node 12 (Qubino smart plug, "Kitchen Globe" in Alexa)
-
-#### Smart devices
-- TBC
+  — note: despite the name, this plug is physically in/near the kitchen
+- **Sylstar 24W Smart LED Ceiling Light**: Tuya/Smart Life compatible, not yet integrated
+  Currently on a simple on/off switch. Protocol TBC — check Smart Life app (WiFi or Zigbee?)
+  - If **Zigbee**: pair directly to MR4 via Zigbee2MQTT — cleanest path
+  - If **WiFi**: Tuya local integration in HA (requires local key extraction)
+  - Either way: needs always-powered (smart light must not lose power)
+  - Switch options: T2 channel (decoupled mode) OR Sonoff ZBMINI-L2 behind existing switch
+    (ZBMINI-L2 simpler if no other relay channel needed in kitchen; no neutral required)
 
 ---
 
