@@ -1,4 +1,5 @@
 .env
 *.env
 secrets/
+.mcp.json
 .mcp.json.local
