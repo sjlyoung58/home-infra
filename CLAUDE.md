@@ -237,6 +237,15 @@ See `homeassistant/docs/AUDI.md` for the full design document.
   is established.
 - For irreversible or high-consequence changes: Claude advises, Simon executes.
 
+### Portainer access scope
+Portainer MCP key is admin-scoped and covers all environments:
+- NAS (primary Docker host) — main working environment
+- Pi 5 — Z-Wave JS stack; writes here affect HA/Z-Wave integration, proceed with care
+- Other dev environments — low risk, read/write fine
+- **VPS (Hostinger) — NEVER write without explicit authorisation from Simon.**
+  VPS is production and internet-facing. Read access fine; any write (restart, redeploy,
+  config change) requires Simon to explicitly ask for it in the same conversation.
+
 ### MCP Servers (to be configured in Claude Code)
 
 #### 1. Home Assistant — ha-mcp
