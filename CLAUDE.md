@@ -275,7 +275,8 @@ Portainer MCP key is admin-scoped and covers all environments:
 #### 2. Portainer — official portainer/portainer-mcp
 - Repo: https://github.com/portainer/portainer-mcp
 - Works with Portainer CE (confirmed — CE/EE both supported)
-- Portainer version: 2.33.2 LTS — use MCP version pin `~=2.33.0`
+- Portainer version: 2.33.2 LTS — mcp-portainer package versioning is independent of
+  Portainer version; use latest (`--from mcp-portainer` with no pin)
 - Requires: Portainer API key (My Account → Access tokens in Portainer UI)
 - Self-signed cert on NAS: set PORTAINER_TLS_VERIFY=0 if needed
 - Config for Claude Code:
