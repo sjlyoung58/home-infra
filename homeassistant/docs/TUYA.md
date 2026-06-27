@@ -57,7 +57,7 @@ pip install tinytuya
 ### Running the wizard
 ```bash
 source ~/.venvs/tinytuya/bin/activate   # activate venv
-cd ~/projects                            # wizard saves files here
+cd ~/projects/tinytuya                  # wizard saves files here
 python3 -m tinytuya wizard
 ```
 
@@ -68,7 +68,7 @@ Wizard prompts:
   — or enter a known ID from a previous run
 - **Region**: `eu` (Central Europe for UK)
 
-### Files created in `~/projects/`
+### Files created in `~/projects/tinytuya/`
 | File | Contents | Commit to git? |
 |------|----------|---------------|
 | `tinytuya.json` | API credentials + last device ID | **NO** — contains secrets |
@@ -89,9 +89,9 @@ Note down for each device:
 - `key` → Local key (secret — store in `.env` or password manager)
 - `mac` → MAC address (use to find IP in router DHCP list)
 
-Then save keys to `.env` and delete the files:
+Then save keys to `.env` and delete the output files (keep `tinytuya.json` for next time):
 ```bash
-rm ~/projects/devices.json ~/projects/tinytuya.json ~/projects/snapshot.json
+rm ~/projects/tinytuya/devices.json ~/projects/tinytuya/snapshot.json ~/projects/tinytuya/tuya-raw.json
 ```
 
 ---
@@ -129,7 +129,7 @@ or use the built-in **Tuya** integration (cloud-based, simpler but cloud-depende
 3. **Run tinytuya wizard** to get the local key:
    ```bash
    source ~/.venvs/tinytuya/bin/activate
-   cd ~/projects
+   cd ~/projects/tinytuya
    python3 -m tinytuya wizard
    ```
    If config from last time is still in `tinytuya.json`, it'll use that — just confirm.
