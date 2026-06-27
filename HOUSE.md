@@ -172,6 +172,13 @@ Contains walk-in wardrobe (NAS location), ensuite bathroom/shower.
 
 #### Smart devices
 - MyEnergi Harvi (clamps monitoring solar and mains)
+- **Intelligent heater** (panel heater, WiFi/Tuya)
+  - Model: GPH-EA/DA | Protocol: WiFi | Paired to Smart Life ✓
+  - Device ID: `6781360298f4abe6c8dc` | MAC: `98:f4:ab:e6:c8:dc`
+  - Local key: in `.env` as `TUYA_KEY_BEDROOM_HEATER`
+  - Controls: on/off, mode (low/high/antifreeze), set temp (5–50°C), current temp sensor
+  - HA: localtuya integration (HACS) — see [TUYA.md](homeassistant/docs/TUYA.md)
+  - Useful automation: current temp sensor → could trigger boost or alert if room too cold
 
 ---
 
@@ -181,15 +188,14 @@ Contains walk-in wardrobe (NAS location), ensuite bathroom/shower.
 #### Lighting
 - Conservatory Kitchen Globe: Z-Wave node 12 (Qubino smart plug, "Kitchen Globe" in Alexa)
   — note: despite the name, this plug is physically in/near the kitchen
-- **Sylstar 24W Smart LED Ceiling Light**: Tuya/Smart Life compatible, not yet integrated
-  Currently on a simple on/off switch. **Confirmed WiFi (2.4GHz)**. Now paired to Smart Life.
-  Pairing: 3× on/off cycles → light flashes → pair in Smart Life app. Phone must be on
-  2.4GHz WiFi during pairing (device does not support 5GHz).
-  - HA integration: Tuya local integration (requires local device key extraction) or
-    cloud-based Tuya integration as simpler first step
-  - Either way: needs always-powered (smart light must not lose power)
-  - Switch options: T2 channel (decoupled mode) OR Sonoff ZBMINI-L2 behind existing switch
-    (ZBMINI-L2 simpler if no other relay channel needed in kitchen; no neutral required)
+- **Sylstar 24W Smart LED Ceiling Light** (CCT only — not RGB despite "colour" in work_mode)
+  - Model: SL-WIFI_R_CCT_24W | Protocol: WiFi 2.4GHz | Paired to Smart Life ✓
+  - Device ID: `bfd3f1a1c10821ddf1myge` | MAC: `d8:1f:12:6d:f7:d8`
+  - Local key: in `.env` as `TUYA_KEY_KITCHEN_LIGHT` | Pairing: 3× on/off, phone on 2.4GHz
+  - Controls: on/off, brightness (10–1000), colour temp (0=cool→1000=warm white)
+  - Needs always-powered — currently on simple on/off switch (needs decoupled switch solution)
+  - Switch plan: T2 channel (decoupled) or Sonoff ZBMINI-L2 (if no other channel needed)
+  - HA: localtuya integration (HACS) — see [TUYA.md](homeassistant/docs/TUYA.md)
 
 ---
 
