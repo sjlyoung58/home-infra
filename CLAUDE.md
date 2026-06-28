@@ -176,7 +176,7 @@ Steps (when ready to cut over):
 2. Z-Wave JS UI → Controller → NVM Backup (wait ~1 min, .bin file downloads)
 3. Swap back to Z-Stick 10 Pro
 4. Z-Wave JS UI → Controller → NVM Restore with the .bin file
-5. Enable WebSocket server, connect HA Z-Wave JS integration
+5. Enable WebSocket server (done ✓), connect HA Z-Wave JS integration at ws://192.168.1.222:3001
 6. Verify all nodes appear in HA; cross-reference against zwave/node-map.md
 
 ### Strategy: keep Gen 5 on Pi 3B until ready to cut over
@@ -426,11 +426,10 @@ Tasks are roughly sequenced. Complete prerequisites before dependents.
       e.g. "Your car sunroof is open" spoken on kitchen Echo
 
 ### Phase 5 — Z-Wave migration to HA
-- [ ] Install Z-Wave JS integration in HA (Settings → Integrations → Z-Wave JS)
-  - Point at Pi 5 Z-Wave JS WebSocket: ws://192.168.1.222:3000
-  - **PREREQUISITE**: WebSocket server is currently DISABLED in Z-Wave JS UI settings
-    Must enable it first: Z-Wave JS UI → Settings → Z-Wave → Enable WS Server
-  - Do NOT migrate Z-Wave JS to NAS yet — keep it on Pi 5 for now
+- [x] Install Z-Wave JS integration in HA (Settings → Integrations → Z-Wave JS)
+  - Connected to ws://192.168.1.222:3001 (port 3001 — 3000 occupied by video-library)
+  - WebSocket server enabled via Z-Wave JS UI → Settings → Home Assistant section
+  - Z-Stick 10 Pro and test GreenWave socket confirmed visible in HA ✓
 - [ ] Verify all Z-Wave devices appear as HA entities
 - [ ] Cross-reference against node-map.md — flag any missing devices
 - [ ] Rename/area-assign entities in HA to match OpenHabian device names
@@ -501,7 +500,9 @@ Architecture confirmed, implementation deferred:
 ## Open Questions / Decisions Pending
 
 - Whether HACS is already installed
-- Z-Wave JS WebSocket port confirmed: 3000 — but server currently DISABLED, must enable before Phase 5
+- Z-Wave JS WebSocket server: **port 3001** (port 3000 in use by video-library Express server on Pi5)
+  Server enabled, HA connected — Z-Stick 10 Pro and test GreenWave socket visible in HA ✓
+  Connection URL: ws://192.168.1.222:3001
 - Alexa integration choice: official `alexa_devices` vs Alexa Media Player
   (re-evaluate at Phase 4 based on what announcement features are available)
 - Whether to eventually move Z-Wave JS from Pi 5 to NAS Docker container
