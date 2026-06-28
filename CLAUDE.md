@@ -475,6 +475,29 @@ Full detail: `~/projects/eddn_client/.claude/parked_issues.md` issue #17
 
 ---
 
+## Parked / To Pick Up Later
+
+### Zigbee + Thread infrastructure (parked — Z-Wave is critical path first)
+Architecture confirmed, implementation deferred:
+- **Z-Wave**: direct WebSocket to Pi5, no extra containers (ws://192.168.1.222:3000)
+- **Zigbee (MR4)**: needs 2 new NAS Portainer stacks — Mosquitto broker + Zigbee2MQTT
+  - Zigbee2MQTT connects to MR4 via TCP (tcp://192.168.1.XX:6638)
+  - HA MQTT integration points to Mosquitto on NAS
+  - Draft stack YAMLs needed before implementation
+- **Thread/Matter**: no extra containers — built-in HA Matter integration + MR4 as Thread Border Router
+- HA MQTT stale entry (OH bridge, 192.168.1.78) already removed 2026-06-28 ✓
+
+### Portainer Docker environment inspections pending
+- **VPS (Hostinger)** — not yet inspected (6/6 containers running)
+- **M720Q (Lenovo, id:4)** — was off, inspect when next powered up
+- **Pi5 (ConservatoryPi5, id:6)** — 2 containers only (Z-Wave JS + agent), quick look pending
+
+### NAS / study-pc cleanup
+- 6 safe NAS containers to remove (see NAS Docker Cleanup section above)
+- study-pc: 8 containers exited 4-5 years ago, tidy when convenient
+
+---
+
 ## Open Questions / Decisions Pending
 
 - Whether HACS is already installed

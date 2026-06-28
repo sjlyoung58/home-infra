@@ -109,7 +109,7 @@ needed at any stage of the migration.
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Remove MQTT integration from HA (bridge remnant) | pending | The MQTT integration was configured solely for the OH→HA bridge. Safe to remove once confirmed nothing else in HA currently depends on it. Do NOT remove if/when Zigbee2MQTT is migrated — that will need MQTT. |
+| Remove MQTT integration from HA (bridge remnant) | **done** | Removed 2026-06-28. Was pointing at 192.168.1.78 (Pi 3B broker). New MQTT will be Mosquitto on NAS for Zigbee2MQTT — separate integration entry. |
 
 ## Alexa cutover plan
 
