@@ -61,7 +61,8 @@ task list (things not yet done).
 **Services running on Pi 5:**
 - Z-Wave JS UI 11.5.2 (Docker) — http://192.168.1.222:8091
   Current stick: Aeotec Z-Stick 10 Pro (800-series), no devices paired yet
-  WebSocket port 3000 — currently disabled, must enable before HA integration
+  WebSocket port **3001** (port 3000 occupied by video-library Express app on Pi5)
+  Server enabled; HA connected at ws://192.168.1.222:3001
 - Node.js dev/test apps (via nvm) — sjly.co.uk, teabc.space
   nginx reverse proxy runs as a Docker container on the NAS, proxying to these apps on Pi 5
 - NVMe HAT fitted (uses Pi 5 PCIe slot)
@@ -479,7 +480,7 @@ Full detail: `~/projects/eddn_client/.claude/parked_issues.md` issue #17
 
 ### Zigbee + Thread infrastructure (parked — Z-Wave is critical path first)
 Architecture confirmed, implementation deferred:
-- **Z-Wave**: direct WebSocket to Pi5, no extra containers (ws://192.168.1.222:3000)
+- **Z-Wave**: direct WebSocket to Pi5, no extra containers (ws://192.168.1.222:3001)
 - **Zigbee (MR4)**: needs 2 new NAS Portainer stacks — Mosquitto broker + Zigbee2MQTT
   - Zigbee2MQTT connects to MR4 via TCP (tcp://192.168.1.XX:6638)
   - HA MQTT integration points to Mosquitto on NAS
