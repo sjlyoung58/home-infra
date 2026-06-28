@@ -452,6 +452,29 @@ Tasks are roughly sequenced. Complete prerequisites before dependents.
 
 ---
 
+## NAS Docker Cleanup (deferred)
+
+Containers identified for removal — do not touch until conditions below are met:
+
+| Container | Action | Condition |
+|-----------|--------|-----------|
+| `wordpress-wordpress-1` + `wordpress-db-1` | Remove | Any time — never actually used |
+| `ftree_ft_mwiki_1` (MediaWiki) | Remove | Any time — superseded by YoungFamilyTree project |
+| `portainer` (old exited instance) | Remove | Any time — safe |
+| `eddn-pgr-py-15` (exited 2 years) | Remove | Any time — safe |
+| `pgr-py_db_1` + `pgr-py_nodehttp_1` (created, never run) | Remove | Any time — safe |
+| `pgrouting-17-test_db_1` (exited 12 months) | Remove | Any time — safe |
+| `eddn-clientz6` + PG15 stack (`pgr-py-15-db-1`) | Remove | **Blocked** — see below |
+
+**`eddn-clientz6` + PG15 retirement is blocked on eddn_client issue #17:**
+The legacy stack runs a daily SQL deducing faction expansions/retreats (stored in
+`ED_MAIN.DTA_FACTION_EXPRET`). Before retiring:
+1. Add FactionChanges persistence to tickDetector processor in `eddn_client`
+2. Migrate historical data from PG15 → PG16
+Full detail: `~/projects/eddn_client/.claude/parked_issues.md` issue #17
+
+---
+
 ## Open Questions / Decisions Pending
 
 - Whether HACS is already installed
