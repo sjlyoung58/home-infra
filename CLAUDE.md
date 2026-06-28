@@ -427,9 +427,10 @@ Tasks are roughly sequenced. Complete prerequisites before dependents.
 
 ### Phase 5 — Z-Wave migration to HA
 - [x] Install Z-Wave JS integration in HA (Settings → Integrations → Z-Wave JS)
-  - Connected to ws://192.168.1.222:3001 (port 3001 — 3000 occupied by video-library)
+  - Connected to ws://192.168.1.222:3001 (port 3001 — 3000 occupied by video-library on Pi5)
   - WebSocket server enabled via Z-Wave JS UI → Settings → Home Assistant section
-  - Z-Stick 10 Pro and test GreenWave socket confirmed visible in HA ✓
+  - **End-to-end proven 2026-06-28**: GWPN1 test socket — on/off control working, 25W power
+    monitoring, energy (kWh), logbook — full chain confirmed ✓
 - [ ] Verify all Z-Wave devices appear as HA entities
 - [ ] Cross-reference against node-map.md — flag any missing devices
 - [ ] Rename/area-assign entities in HA to match OpenHabian device names
