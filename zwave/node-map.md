@@ -7,8 +7,23 @@ Z-Wave JS UI version: 11.5.2
 Node names/locations not yet configured in Z-Wave JS UI (nodes.json is empty).
 Table derived from OpenHAB items (controller was migrated from Pi 3B).
 
-**Note:** WebSocket server currently disabled — must be enabled in Z-Wave JS UI
-settings before configuring HA Z-Wave JS integration (port 3000).
+**Note:** WebSocket server enabled on port 3001. HA connected at ws://192.168.1.222:3001.
+
+## GWPN1 post-migration configuration (apply to all GreenWave sockets)
+
+After including each GWPN1 in the new Z-Wave network, set these parameters:
+
+| Parameter | Name | Value | Effect |
+|-----------|------|-------|--------|
+| 1 | No Communication Light | **0** | Disable constant flash when controller silent |
+| 4 | LED for Network Error | **1** | Enable warning flash if network error occurs |
+
+**Result:** Solid LED in normal operation; flashes only on genuine network error.
+
+**HA gotcha:** HA's slider for Parameter 1 won't go below 1. Workaround:
+1. Disable the "No Communication Light" entity in HA (three-dot menu → Disable)
+2. Set Parameter 1 = 0 in Z-Wave JS UI → node → Configuration tab
+3. The 0 value will then stick
 
 | Node | Device / OH name | Type | Location | Notes |
 |------|-----------------|------|----------|-------|
