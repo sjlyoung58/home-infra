@@ -15,15 +15,19 @@ After including each GWPN1 in the new Z-Wave network, set these parameters:
 
 | Parameter | Name | Value | Effect |
 |-----------|------|-------|--------|
-| 1 | No Communication Light | **0** | Disable constant flash when controller silent |
-| 4 | LED for Network Error | **1** | Enable warning flash if network error occurs |
+| 1 | No Communication Light | 1 (leave at minimum) | Cannot be set to 0 — both HA and Z-Wave JS UI revert to 1 |
+| 4 | LED for Network Error | **0** | Disable flash — solid green in normal operation |
 
-**Result:** Solid LED in normal operation; flashes only on genuine network error.
+**Result:** Solid green LED always. No flash.
 
-**HA gotcha:** HA's slider for Parameter 1 won't go below 1. Workaround:
-1. Disable the "No Communication Light" entity in HA (three-dot menu → Disable)
-2. Set Parameter 1 = 0 in Z-Wave JS UI → node → Configuration tab
-3. The 0 value will then stick
+**Why not Parameter 4=1 (enable error flash)?**
+Z-Wave JS is event-driven and does not poll devices. Parameter 1 cannot be set below 1
+(minimum enforced by Z-Wave JS config database despite spec saying 0 is valid). With
+Z-Wave JS not polling, the 1-minute no-communication timer always expires → constant flash.
+Setting Parameter 4=0 disables the LED error indicator entirely.
+
+**Node health monitoring:** use HA's Z-Wave JS integration instead — each node shows
+`Alive`/`Dead` in device diagnostics, which is more reliable than the physical LED.
 
 | Node | Device / OH name | Type | Location | Notes |
 |------|-----------------|------|----------|-------|
