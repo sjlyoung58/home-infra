@@ -247,6 +247,15 @@ matched by the Gen5+ (S2, SmartStart).
 
 Not yet decided between options 1/2/3 — pick up here next session.
 
+**Pending action for next session:** HA's Z-Wave JS integration has flagged that the
+controller changed (Simon connected HA to check status on 2026-07-01) and is asking to
+redo/reconfigure the integration — presumably because it ties itself to the connected
+controller's identity somehow, even though the home ID (`0xde2f557d`) is unchanged from
+its perspective. Need to go through HA's Z-Wave JS integration reconfiguration flow
+(Settings → Devices & Services → Z-Wave JS → reconfigure, or remove/re-add pointing at
+ws://192.168.1.222:3001) before HA will control the Gen5+-backed network again. Not yet
+done — pick up here.
+
 **Worst-case recovery note (Gen5 or Gen5+ bricked beyond use, no matching-SDK spare
 left to restore onto):** the physical Z-Wave devices themselves are unaffected — they're
 independent radios waiting for a controller with the right home ID/keys. Recovery would
