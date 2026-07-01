@@ -60,7 +60,8 @@ task list (things not yet done).
 
 **Services running on Pi 5:**
 - Z-Wave JS UI 11.5.2 (Docker) — http://192.168.1.222:8091
-  Current stick: Gen5+ (500-series, via USB hub) — migration in progress, see zwave/migration.md
+  Current stick: Gen5 (500-series, now firmware v1.2/SDK 6.81.6, via USB hub) —
+  migration in progress, network verified intact, see zwave/migration.md
   Z-Stick 10 Pro (800-series) unplugged and set aside pending migration completion
   WebSocket port **3001** (port 3000 occupied by video-library Express app on Pi5)
   Server enabled; HA connected at ws://192.168.1.222:3001
