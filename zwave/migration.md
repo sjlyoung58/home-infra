@@ -178,7 +178,57 @@ harm done to the production system at any point.
    no Z-Wave Long Range or improved S2 security (the 800-series' main advantages this
    whole migration was chasing).
 
-Not yet decided — pick up here next session.
+**Superseded by the result below — do not treat as "not yet decided" without reading
+the Gen5+ validation first.**
+
+---
+
+## Gen5+ same-generation restore — validated success (2026-07-01)
+
+Simon asked the sharp follow-up: if the 500→800 conversion has a real bug, would the
+*same* backup restore cleanly onto the Gen5+ instead (same generation, no format
+conversion, no new home ID needed)? Tested it — yes, decisively.
+
+**Also discovered along the way: the Gen5+ does not need the USB hub.** Plugged
+directly into the Pi5 with no hub, it enumerated immediately and cleanly
+(`idVendor=0658, idProduct=0200`, straight to `ttyACM0`, no SE1/enumeration failure).
+Cross-checked against Aeotec's own product info: the "+" is a real 2020 hardware
+revision, not just a firmware relabel — native Z-Wave S2 (AES-128 + ECDH), SmartStart,
+~50% faster secure comms, UL 1023 compliance, and specifically marketed as fixing the
+USB/Raspberry Pi 4 compatibility issue the plain Gen5 has. The live Gen5's own firmware
+update earlier only matched it to the same *firmware version number* — the USB
+electrical fix is silicon-level and firmware cannot retroactively grant it, which is
+why the live Gen5 still needs the hub even at v1.2.
+
+**Restore procedure:** unplugged the live Gen5 from the Pi3B first (avoids two
+controllers simultaneously claiming node ID 1 / primary role on the same home ID —
+a real conflict, not just theoretical), then restored
+`gen5_1-2_NVM_20260701124605.bin` onto the Gen5+ (connected directly to the Pi5, no
+hub) via Z-Wave JS UI.
+
+**Result — home ID unchanged at `0xde2f557d`** (confirming no conversion was needed,
+unlike the 10 Pro attempt which generated a new ID). Real RF pings this time, not just
+table entries:
+- **12 nodes confirmed alive with successful pings on the first attempt**: 4, 6, 7, 8,
+  9, 10, 11, 12, 13, 14, 15, 20
+- **3 came back dead**, all with plausible pre-existing causes unrelated to the
+  migration:
+  - Node 003 (Siren/Alarm) — battery likely dead, hasn't been touched in years
+  - Node 005 (Kitchen Window Plug) — likely just not powered at the wall right now
+  - Node 016 — already documented in `node-map.md` as failed hardware from ~a year ago
+
+**Conclusion: the Gen5+ is a fully validated, working clone of the Gen5's network.**
+This confirms the theory completely — the 10 Pro migration's failure was specific to
+the cross-generation conversion step, not a general problem with NVM restore.
+
+**This opens a third option, beyond the two-way choice above:**
+3. **Promote the Gen5+ to permanent controller**, retiring the old Gen5 entirely. Gets
+   real hardware-backed S2 security and SmartStart, no hub dependency, sidesteps the
+   fragile 500→800 conversion problem completely. Does not get Z-Wave Long Range
+   (800-series only) — the remaining question is whether that matters enough to
+   pursue option 1 (full re-inclusion onto the 10 Pro) instead.
+
+Not yet decided between options 1/2/3 — pick up here next session.
 
 **Worst-case recovery note (Gen5 or Gen5+ bricked beyond use, no matching-SDK spare
 left to restore onto):** the physical Z-Wave devices themselves are unaffected — they're
