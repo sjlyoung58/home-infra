@@ -36,8 +36,11 @@ the Gen5, and all devices will be controllable via Home Assistant.
 - `node-map.md` — full list of all Z-Wave nodes (derived from OpenHAB items), with
   GWPN1 post-migration configuration notes
 - `migration.md` — this file
-- `Gen5_NVM_20260701095038.bin` — NVM backup taken off the live Gen5 (v1.1/SDK 6.51.10)
-  on 2026-07-01. Gitignored (`zwave/*.bin`), contains Z-Wave security keys, do not commit.
+- `Gen5_NVM_20260701095038.bin` — **stale/pre-upgrade** NVM backup taken off the Gen5
+  while still at v1.1/SDK 6.51.10 (2026-07-01, pre-firmware-update). SDK too old to
+  restore anywhere (see Phase 4 note) — kept for historical/rollback reference only. A
+  **fresh** backup is needed post-upgrade for the actual Phase 5 restore onto the 10 Pro.
+  Gitignored (`zwave/*.bin`), contains Z-Wave security keys, do not commit.
 
 ---
 
@@ -77,8 +80,8 @@ the Gen5, and all devices will be controllable via Home Assistant.
   node-table replication + primary promotion. NVM backup/restore remains the only
   actually-supported migration path in zwave-js today.
 
-**Decided plan — transplant the network onto the Gen5+ instead of firmware-flashing
-the live Gen5:**
+**Decided plan (superseded — see outcome below) — transplant the network onto the
+Gen5+ instead of firmware-flashing the live Gen5:**
 1. Downgrade the **Gen5+** to v1.01 (SDK ~6.51, matching the backup) using Aeotec's
    `Z_Stick_G5_V1_01_DFU.zip` (requires a free Aeotec support-portal account to download)
 2. Restore `Gen5_NVM_20260701095038.bin` onto the now-v1.01 Gen5+ — same SDK family, no
@@ -93,13 +96,29 @@ the live Gen5:**
 6. The live Gen5 is never touched by any firmware operation in this plan — it remains
    the permanent rollback the whole way through
 
-**Next action (in progress):** Simon is moving to a Windows PC to do steps 1–2 (Gen5+
-downgrade + restore, both need Windows + a real USB connection — not the Pi5/hub, not
-a VM). **Steps 1 and 2 happen on Windows, not the Pi5** — the Gen5+ needs to travel
-there. Step 3 (verify restore) can be done back on the Pi5 in Z-Wave JS UI once the
-Gen5+ returns, or directly on Windows if Z-Wave JS UI / a compatible tool is available
-there. Step 4 (v1.02 upgrade) is the same Windows-based Aeotec updater procedure
-already documented in Phase 4a below — just point it at the Gen5+ instead of the Gen5.
+**Outcome (2026-07-01, actual path taken):** no `V1.01` downgrade image was available
+for the **Gen5+** specifically (only for the original Gen5), so the Gen5+-transplant
+plan above was abandoned. Simon instead used **Phase 4a-fallback**: flashed the
+**live Gen5** directly to v1.02 via the Windows Aeotec updater.
+
+Verified successful, thoroughly, at every layer:
+- Driver log on reconnect: `home ID: 0xde2f557d`, firmware `1.2`, SDK `6.81.6`
+- Controller reported `Z-Wave Classic nodes: 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, ...`
+  directly from its own NVM — i.e. the update preserved the network in place as designed
+- Every node (3–16, 20) pinged successfully and came back "ready to be used"
+- Raw persisted cache file `de2f557d.jsonl` on the Pi5 confirmed full data for nodes
+  1, 3–16, 20 — checked independently of any UI
+- (There was a false alarm: zwave-js-ui's web UI briefly showed only node 001 in one
+  browser tab after the stick reconnected — turned out to be a stale/cached browser
+  session on that specific tab, not a data issue. Confirmed fine in a fresh
+  Firefox session at http://localhost:8091/#/control-panel. Hard-refresh or a new
+  browser/tab fixes this if it recurs.)
+
+**The live Gen5 is now at v1.2/SDK 6.81.6** — i.e. it has itself crossed the SDK 6.61
+threshold. The Gen5+ was never touched further and is not part of the plan going
+forward. **Next step: take a fresh NVM backup off the live Gen5 (the old
+`Gen5_NVM_20260701095038.bin` is still SDK 6.51.10 and useless for restoring anywhere)
+and proceed with Phase 5 onward, restoring onto the Z-Stick 10 Pro.**
 
 **Fallback if this doesn't pan out:** Simon has an accepted fallback — keep the Gen5
 (500-series) as the permanent HA controller via the USB hub on the Pi5, skipping the
