@@ -22,8 +22,8 @@ the Gen5, and all devices will be controllable via Home Assistant.
 | Z-Wave JS container | `zwave-js-ui` (Docker, running) |
 | Z-Wave JS store | `/DockerVolumes/ha/zwave/store/` |
 | Settings file | `/DockerVolumes/ha/zwave/store/settings.json` |
-| Current stick | Z-Stick 10 Pro (800-series), port: `/dev/zwave` or `/dev/ttyUSB0` |
-| Current home ID | `0xcd2fc96a` (Z-Stick 10 Pro's own network — 2 nodes, just test socket) |
+| Currently connected to Pi5 (2026-07-01) | Spare Gen5+ (via USB hub) — see "Current status" section below for why |
+| Z-Stick 10 Pro home ID | `0xcd2fc96a` (its own network — 2 nodes, just test socket; currently unplugged, set aside) |
 | Target home ID | `0xde2f557d` (Gen5 network from Pi3B — all OH devices) |
 | HA connection | ws://192.168.1.222:3001 (port 3001 — port 3000 occupied by video-library app) |
 | Pi3B (OH) | openhabian@192.168.1.78 — Gen5 plugged in here, running OpenHAB 2.5.10 |
@@ -36,6 +36,86 @@ the Gen5, and all devices will be controllable via Home Assistant.
 - `node-map.md` — full list of all Z-Wave nodes (derived from OpenHAB items), with
   GWPN1 post-migration configuration notes
 - `migration.md` — this file
+- `Gen5_NVM_20260701095038.bin` — NVM backup taken off the live Gen5 (v1.1/SDK 6.51.10)
+  on 2026-07-01. Gitignored (`zwave/*.bin`), contains Z-Wave security keys, do not commit.
+
+---
+
+## Current status (2026-07-01) — read this first if resuming
+
+**Where things physically stand right now:**
+- The live Gen5 (v1.1, SDK 6.51.10, home ID `0xde2f557d`, all OH nodes) is back on the
+  Pi3B running OH, **untouched** — never firmware-flashed, never restored-to.
+- A spare, never-used **Gen5+** is currently plugged into the Pi5 via the USB hub, with
+  `zwave-js-ui` running against it. It reports **FW v1.2, SDK v6.81.6** (Aeotec's
+  `V1.02` release) — i.e. already at the target firmware, out of the box.
+- `Gen5_NVM_20260701095038.bin` (backup of the live Gen5) is saved in this directory.
+- Device mapping note: the Gen5 and Gen5+ both enumerate identically —
+  `idVendor=0658, idProduct=0200`, no serial number in the USB descriptor, both show up
+  as `/dev/serial/by-id/usb-0658_0200-if00` → `ttyACM0`. **The two sticks are visually
+  indistinguishable at the OS/Docker level** — the only way to tell them apart is by
+  what Z-Wave JS UI reports once connected (home ID / node count / firmware version).
+  No Portainer stack device-mapping change was needed to swap between them.
+
+**What we tried and found:**
+- Test-restored the Gen5 backup onto the (already v1.2) Gen5+ to see if it would just
+  work. It failed:
+  ```
+  Error while calling restoreNVM: Failed to convert NVM to target format:
+  Did not find a matching NVM 500 parser implementation! Make sure that the
+  NVM data belongs to a controller with Z-Wave SDK 6.61 or higher. (ZW0280)
+  ```
+  This confirms Z-Wave JS has no parser at all for NVM data below SDK 6.61 — a backup
+  taken from firmware below that line **cannot be restored anywhere**, full stop. There
+  is no converter, and no way to route around this via a different destination stick.
+  (Full detail in the Phase 4 note below.)
+- Investigated Z-Wave's built-in Controller Replication / "Learn Mode" as an alternative
+  to NVM backup/restore entirely (it's exposed as a raw button in zwave-js-ui). Ruled
+  out: per the zwave-js maintainer (GitHub discussion #7268, Oct 2024), full
+  secondary-controller-promotion migration is an acknowledged but **unimplemented**
+  feature — the exposed "Learn Mode" button only does a low-level network join, not full
+  node-table replication + primary promotion. NVM backup/restore remains the only
+  actually-supported migration path in zwave-js today.
+
+**Decided plan — transplant the network onto the Gen5+ instead of firmware-flashing
+the live Gen5:**
+1. Downgrade the **Gen5+** to v1.01 (SDK ~6.51, matching the backup) using Aeotec's
+   `Z_Stick_G5_V1_01_DFU.zip` (requires a free Aeotec support-portal account to download)
+2. Restore `Gen5_NVM_20260701095038.bin` onto the now-v1.01 Gen5+ — same SDK family, no
+   format conversion needed, should succeed where the v1.2 test failed
+3. Verify the restore: Gen5+ should now show home ID `0xde2f557d` and all OH nodes
+4. **Do the risky v1.02 upgrade on the Gen5+ instead of the live Gen5** — if this bricks
+   the Gen5+, nothing is lost; the live Gen5 is still sitting untouched on the Pi3B
+5. Once the Gen5+ is confirmed at v1.2 with the full network restored, continue this
+   guide from **Phase 5 onward** (NVM backup off the Gen5+ → restore onto the Z-Stick
+   10 Pro) exactly as originally written — that hop (v1.2 500-series → 800-series) is
+   the one Aeotec's own migration guide is designed for
+6. The live Gen5 is never touched by any firmware operation in this plan — it remains
+   the permanent rollback the whole way through
+
+**Next action (in progress):** Simon is moving to a Windows PC to do steps 1–2 (Gen5+
+downgrade + restore, both need Windows + a real USB connection — not the Pi5/hub, not
+a VM). **Steps 1 and 2 happen on Windows, not the Pi5** — the Gen5+ needs to travel
+there. Step 3 (verify restore) can be done back on the Pi5 in Z-Wave JS UI once the
+Gen5+ returns, or directly on Windows if Z-Wave JS UI / a compatible tool is available
+there. Step 4 (v1.02 upgrade) is the same Windows-based Aeotec updater procedure
+already documented in Phase 4a below — just point it at the Gen5+ instead of the Gen5.
+
+**Fallback if this doesn't pan out:** Simon has an accepted fallback — keep the Gen5
+(500-series) as the permanent HA controller via the USB hub on the Pi5, skipping the
+Z-Stick 10 Pro migration entirely. Trade-off: permanent hub dependency, no Z-Wave Long
+Range or improved S2 security (the 800-series' main advantages). Reasonable if the
+Gen5+ transplant plan runs into trouble.
+
+**Worst-case recovery note (Gen5 or Gen5+ bricked beyond use, no matching-SDK spare
+left to restore onto):** the physical Z-Wave devices themselves are unaffected — they're
+independent radios waiting for a controller with the right home ID/keys. Recovery would
+mean fresh inclusion of every node onto whichever controller is left working, losing
+old node IDs (automations need rebuilding). One relevant detail for that scenario: the
+Qubino modules (some in a loft, hard to reach physically) do **not** require physical
+access to re-pair — they support inclusion/exclusion via 3 quick toggles of their wired
+wall switch (On-Off-On-Off-On within ~5 seconds) while the controller is in
+inclusion/exclusion mode. GreenWave sockets are not a concern (easy physical access).
 
 ---
 
@@ -93,30 +173,51 @@ ls /dev/tty{USB,ACM}* 2>/dev/null
 
 ### Phase 3 — Point Z-Wave JS at Gen5
 
-**7.** Update the port in settings.json to the Gen5 device path from step 5:
+> **settings.json's port does NOT need to change — only the Docker device mapping does.**
+> The container always sees the stick at the same fixed internal path, `/dev/zwave`,
+> regardless of which physical stick is plugged in. Docker remaps whichever host
+> `/dev/serial/by-id/...` path is configured onto that fixed name. So `settings.json`
+> should stay `"port": "/dev/zwave"` permanently — never a host path like `/dev/ttyUSB0`
+> or `/dev/ttyACM0`, which don't exist inside the container's namespace at all.
+>
+> This container is managed as a **Portainer stack** (project `zwave`), and Portainer
+> itself runs on the NAS (https://192.168.1.137:9443) — the Pi5 only runs a Portainer
+> agent, there is no local compose file to hand-edit. The device mapping is hardcoded
+> to the *current* stick's `/dev/serial/by-id/...` path in the stack's compose YAML, e.g.:
+> ```
+> /dev/serial/by-id/usb-Silicon_Labs_CP2105_Dual_USB_to_UART_Bridge_Controller_<serial>-if01-port0:/dev/zwave
+> ```
+> When you swap sticks, that by-id path no longer exists on the host, so `docker start`
+> fails at the daemon level (`error gathering device information ... no such file or
+> directory`) — **before** the container or settings.json are even read.
+
+**7.** Confirm settings.json still has the fixed internal path (should be unchanged):
 ```bash
-# Check current port first
 python3 -c "import json; s=json.load(open('/DockerVolumes/ha/zwave/store/settings.json')); print(s['zwave']['port'])"
 ```
-
-Then update it (replace `/dev/ttyUSB0` with actual path if different):
+Expected output: `/dev/zwave`. If it's anything else, fix it (needs `sudo`, file is owned
+by the container):
 ```bash
-python3 - <<'EOF'
+sudo python3 - <<'EOF'
 import json
 path = '/DockerVolumes/ha/zwave/store/settings.json'
 with open(path) as f:
     s = json.load(f)
-s['zwave']['port'] = '/dev/ttyUSB0'   # ← change to actual Gen5 device path
+s['zwave']['port'] = '/dev/zwave'
 with open(path, 'w') as f:
     json.dump(s, f, indent=2)
-print('port updated to:', s['zwave']['port'])
+print('port set to:', s['zwave']['port'])
 EOF
 ```
 
-> Note: if `PermissionError`, the file is owned by the container. Use the Z-Wave JS UI
-> Settings → Z-Wave → Serial Port field to change it after starting the container.
+**7a.** Update the Docker device mapping, **before** starting the container:
+1. Find the Gen5's stable by-id path: `ls -la /dev/serial/by-id/`
+2. Portainer UI → NAS (https://192.168.1.137:9443) → Stacks → `zwave` → edit compose YAML
+3. Change the `devices:` line to point at the Gen5's by-id path (still mapped to
+   `/dev/zwave` inside the container)
+4. Redeploy the stack — this recreates the container with the corrected device mapping
 
-**8.** Start Z-Wave JS:
+**8.** Start Z-Wave JS (if not already started by the Portainer redeploy in 7a):
 ```bash
 docker start zwave-js-ui
 ```
@@ -130,8 +231,113 @@ Gen5 (should show home ID `0xde2f557d` and all the OH nodes, not `0xcd2fc96a`).
 
 **10.** In Z-Wave JS UI → node 001 (controller) → check firmware version displayed.
 - **FW: v1.2** → proceed ✓
-- **Not v1.2** → STOP. Firmware update required before proceeding (separate procedure,
-  needs Aeotec firmware updater tool). Do not proceed without V1.2.
+- **Not v1.2** → STOP. Firmware update required before proceeding — go to Phase 4a below.
+  Do not proceed without V1.2.
+
+> Note: Z-Wave JS UI displays the Gen5's firmware without a leading zero, e.g. Aeotec's
+> `V1.02` release shows as `v1.2`, and `V1.01` shows as `v1.1`. Confirmed on
+> 2026-07-01: this stick reported `v1.1` — i.e. one release behind (`V1.01`), needs the
+> `V1.02` update.
+
+> **Confirmed 2026-07-01 — no way to route around this, verified safely on a spare stick:**
+> Took an NVM backup of the live Gen5 (v1.1 / SDK 6.51.10) and test-restored it onto a
+> spare, never-used Gen5+ that was already at v1.2 (SDK 6.81.6). The restore failed with:
+> ```
+> Error while calling restoreNVM: Failed to convert NVM to target format:
+> Did not find a matching NVM 500 parser implementation! Make sure that the
+> NVM data belongs to a controller with Z-Wave SDK 6.61 or higher. (ZW0280)
+> ```
+> This confirms the limitation is in the **source backup's SDK version**, not the
+> destination stick — Z-Wave JS has no parser at all for NVM data below SDK 6.61, so a
+> backup taken from the live Gen5 *before* updating its firmware cannot be restored
+> anywhere (Gen5+ or 10 Pro), no exceptions. The live Gen5 must be updated to v1.2 first;
+> there is no safe way to skip Phase 4a. (Test cost nothing — spare stick only, backup
+> is read-only, live Gen5/network untouched throughout.)
+
+---
+
+### Phase 4a — Transplant the network onto Gen5+ (decided plan, supersedes flashing the live Gen5 directly)
+
+**Do not firmware-flash the live Gen5.** Per the "Current status" section above, the
+decided plan routes all firmware-flash risk onto the spare Gen5+ instead. This phase
+moves the Gen5+ back and forth between the **Windows PC** (firmware flashing — Aeotec's
+tool needs real Windows, not a VM, not the Pi5/WSL2) and the **Pi5** (NVM restore, which
+only happens through the Z-Wave JS UI web interface). Each step below is tagged with
+which machine it happens on.
+
+**10a. [Windows]** Create a free account at https://aeotec.freshdesk.com/support/login
+if you don't already have one (required to download firmware). Download:
+- Downgrade firmware: `Z_Stick_G5_V1_01_DFU.zip`
+- Upgrade firmware (needed later in this same phase): `DFU of Z-Stick_G5_EU_V1_02.zip`
+  ([reference article](https://aeotec.freshdesk.com/support/solutions/articles/6000252294-z-stick-gen5-v1-02-firmware-update))
+- Driver: `ZW050x_USB_Programming_Driver.zip`
+
+**10b. [Windows]** Plug the Gen5+ directly into the Windows PC. Unlike on the Pi5, a
+USB hub is probably not needed — the non-compliant D+ behaviour is specifically a
+Raspberry Pi USB host controller issue (see Key facts / CLAUDE.md), and typical
+Windows PC USB controllers are more tolerant of this kind of quirk. If it doesn't
+enumerate, try adding a hub as a fallback.
+
+**10c. [Windows]** Install the driver (pick one):
+- Easy: unzip driver package, right-click `zw05xxprg.inf` → Install
+- Manual: Device Manager → plug in stick → Ports → right-click `UZB (COMX)` →
+  Update Driver → browse to extracted folder
+- Alternative: run `CP210xVCPInstaller_x86.exe` or `_x64.exe` from the same package
+
+**10d. [Windows] — Downgrade to v1.01:** Close any other software touching the stick.
+Unzip `Z_Stick_G5_V1_01_DFU.zip`, run the updater exe inside, Settings → select the
+Gen5+'s COM port → Update. Wait for completion, close, wait ~10s, unplug/replug.
+
+**10e. [Windows/Pi5]** Confirm the downgrade. If the updater tool shows a version
+readout, check it there; otherwise move the Gen5+ back to the Pi5 (Phase 2 style, via
+hub) and check node 001 in Z-Wave JS UI — should now read **v1.1 / SDK ~6.51**, own
+blank network (its previous v1.2 test network, if any, may be reset by the downgrade —
+irrelevant, it's about to be overwritten anyway).
+
+**10f. [Pi5] — Restore the real network:** With the now-v1.01 Gen5+ connected to the
+Pi5 and `zwave-js-ui` running: Control Panel → purple floating "Advanced actions"
+button → **General actions** → **NVM Management** → **Restore** → select
+`Gen5_NVM_20260701095038.bin` from this directory. This should succeed now (same SDK
+family as the backup, no format conversion needed — this is the exact operation that
+failed in the Phase 4 test when the Gen5+ was still at v1.2).
+
+**10g. [Pi5]** Verify: Gen5+ should now show home ID `0xde2f557d` and all the OH nodes
+(cross-reference against `node-map.md`).
+
+**10h. [Windows] — Upgrade to v1.02 (the "risky" step, now on the disposable stick):**
+Move the Gen5+ (now holding the real network) back to the Windows PC. Unzip
+`DFU of Z-Stick_G5_EU_V1_02.zip`, double-click `Z_Stick_G5_EU_V1_02.exe`, Settings →
+select COM port → Update. Wait for completion, close, wait ~10s, unplug/replug.
+
+> **Critical warnings (from Aeotec, unchanged):**
+> - The update **can brick the stick** — no official recovery, voids warranty
+> - Stick must be a 2018-or-later unit (age/hardware revision requirement)
+> - Do not interrupt the update once started
+> - **If this bricks the Gen5+:** nothing is actually lost — the live Gen5 is still
+>   sitting untouched on the Pi3B running OH. You'd just need another spare stick and
+>   to redo 10a–10g. This is exactly why the risk was moved here instead of onto the
+>   live Gen5.
+
+**10i. [Pi5]** Return the Gen5+ to the Pi5 (via hub), confirm Z-Wave JS UI shows
+firmware `v1.2`, home ID `0xde2f557d`, and all OH nodes still present, then continue to
+**Phase 5 below — using the Gen5+ as the source stick** (the live Gen5 is not involved
+in Phase 5 onward at all; it stays on the Pi3B as the permanent rollback).
+
+---
+
+### Phase 4a-fallback — Flash the live Gen5 directly (not the decided plan — reference only)
+
+If the Gen5+ transplant plan above turns out not to be viable (e.g. no downgrade file
+available, restore fails for some other reason), the direct route is to firmware-update
+the live Gen5 itself. This carries the bricking risk directly to the production stick —
+only do this if Phase 4a above is not an option, and take a fresh NVM backup of the
+Gen5 immediately beforehand regardless (extra insurance beyond the one already taken).
+
+Steps are identical to Phase 4a's 10a/10c/10h (skip the downgrade/restore parts, this
+stick is already v1.1 and already holds the real network) — download the same
+`DFU of Z-Stick_G5_EU_V1_02.zip` + driver, install driver, run the updater directly
+against the Gen5, same warnings apply. Once done, return the Gen5 to the Pi5 via the
+USB hub and continue to Phase 5 as originally written.
 
 ---
 
@@ -165,27 +371,38 @@ docker stop zwave-js-ui
 
 **16.** Plug Z-Stick 10 Pro back into Pi5 (directly, no hub needed).
 
-**17.** Confirm 10 Pro enumerated:
+**17.** Confirm 10 Pro enumerated, and note its by-id path:
 ```bash
 dmesg | tail -10
+ls -la /dev/serial/by-id/
 ```
 
-**18.** Update settings.json port back to 10 Pro's device path (probably `/dev/zwave` or
-`/dev/ttyUSB0` — check `dmesg` output):
+**17a.** Same two-part update as Phase 3, step 7a — **do this before starting the
+container**:
+1. Portainer UI → NAS (https://192.168.1.137:9443) → Stacks → `zwave` → edit compose YAML
+2. Change the `devices:` line back to the 10 Pro's by-id path (mapped to `/dev/zwave`)
+3. Redeploy the stack
+
+**18.** Confirm settings.json still has the fixed internal path (should not need to
+change — see note in Phase 3):
 ```bash
-python3 - <<'EOF'
+python3 -c "import json; s=json.load(open('/DockerVolumes/ha/zwave/store/settings.json')); print(s['zwave']['port'])"
+```
+Expected output: `/dev/zwave`. If it's anything else, fix it (needs `sudo`):
+```bash
+sudo python3 - <<'EOF'
 import json
 path = '/DockerVolumes/ha/zwave/store/settings.json'
 with open(path) as f:
     s = json.load(f)
-s['zwave']['port'] = '/dev/zwave'   # ← adjust if needed
+s['zwave']['port'] = '/dev/zwave'
 with open(path, 'w') as f:
     json.dump(s, f, indent=2)
-print('port updated to:', s['zwave']['port'])
+print('port set to:', s['zwave']['port'])
 EOF
 ```
 
-**19.** Start Z-Wave JS:
+**19.** Start Z-Wave JS (if not already started by the Portainer redeploy in 17a):
 ```bash
 docker start zwave-js-ui
 ```

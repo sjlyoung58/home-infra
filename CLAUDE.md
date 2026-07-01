@@ -29,7 +29,7 @@ task list (things not yet done).
 
 ### Synology NAS (primary Docker host)
 - Runs Docker via Portainer Community Edition 2.33.2 LTS
-- Portainer URL: https://192.168.1.137:9443
+- Portainer URL: http://192.168.1.137:9000 (confirmed 2026-07-01; port 9443/HTTPS does not respond)
 - All primary service stacks run here
 - Volume base path: /volume2/docker/
 
@@ -279,7 +279,7 @@ Portainer MCP key is admin-scoped and covers all environments:
 - Portainer version: 2.33.2 LTS — mcp-portainer package versioning is independent of
   Portainer version; use latest (`--from mcp-portainer` with no pin)
 - Requires: Portainer API key (My Account → Access tokens in Portainer UI)
-- Self-signed cert on NAS: set PORTAINER_TLS_VERIFY=0 if needed
+- No TLS on NAS instance — plain HTTP on port 9000, PORTAINER_TLS_VERIFY not applicable
 - Config for Claude Code:
   ```json
   {
@@ -288,7 +288,7 @@ Portainer MCP key is admin-scoped and covers all environments:
         "command": "uvx",
         "args": ["--from", "mcp-portainer~=2.33.0", "mcp-portainer"],
         "env": {
-          "PORTAINER_URL": "https://192.168.1.137:9443",
+          "PORTAINER_URL": "http://192.168.1.137:9000",
           "PORTAINER_API_KEY": "<api-key>"
         }
       }
