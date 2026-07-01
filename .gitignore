@@ -3,3 +3,4 @@
 secrets/
 .mcp.json
 .mcp.json.local
+zwave/*.bin
