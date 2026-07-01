@@ -36,11 +36,14 @@ the Gen5, and all devices will be controllable via Home Assistant.
 - `node-map.md` — full list of all Z-Wave nodes (derived from OpenHAB items), with
   GWPN1 post-migration configuration notes
 - `migration.md` — this file
-- `Gen5_NVM_20260701095038.bin` — **stale/pre-upgrade** NVM backup taken off the Gen5
-  while still at v1.1/SDK 6.51.10 (2026-07-01, pre-firmware-update). SDK too old to
-  restore anywhere (see Phase 4 note) — kept for historical/rollback reference only. A
-  **fresh** backup is needed post-upgrade for the actual Phase 5 restore onto the 10 Pro.
-  Gitignored (`zwave/*.bin`), contains Z-Wave security keys, do not commit.
+- `xxxxGen5_NVM_20260701095038.bin` — **stale/pre-upgrade** NVM backup taken off the
+  Gen5 while still at v1.1/SDK 6.51.10 (2026-07-01, pre-firmware-update). SDK too old
+  to restore anywhere (see Phase 4 note) — kept for historical/rollback reference only,
+  renamed with `xxxx` prefix to mark it as superseded/do-not-use.
+- `gen5_1-2_NVM_20260701124605.bin` — fresh NVM backup taken off the Gen5 post-firmware-
+  update (v1.2/SDK 6.81.6). This is the one actually used for the Phase 7 restore onto
+  the Z-Stick 10 Pro — see Phase 7 outcome section for what happened.
+  Both `.bin` files gitignored (`zwave/*.bin`), contain Z-Wave security keys, do not commit.
 
 ---
 
@@ -116,15 +119,66 @@ Verified successful, thoroughly, at every layer:
 
 **The live Gen5 is now at v1.2/SDK 6.81.6** — i.e. it has itself crossed the SDK 6.61
 threshold. The Gen5+ was never touched further and is not part of the plan going
-forward. **Next step: take a fresh NVM backup off the live Gen5 (the old
-`Gen5_NVM_20260701095038.bin` is still SDK 6.51.10 and useless for restoring anywhere)
-and proceed with Phase 5 onward, restoring onto the Z-Stick 10 Pro.**
+forward. Took a fresh backup, `gen5_1-2_NVM_20260701124605.bin`, and proceeded with
+Phase 5 onward — see next section for the outcome.
 
-**Fallback if this doesn't pan out:** Simon has an accepted fallback — keep the Gen5
-(500-series) as the permanent HA controller via the USB hub on the Pi5, skipping the
-Z-Stick 10 Pro migration entirely. Trade-off: permanent hub dependency, no Z-Wave Long
-Range or improved S2 security (the 800-series' main advantages). Reasonable if the
-Gen5+ transplant plan runs into trouble.
+---
+
+## Phase 7 outcome (2026-07-01) — cross-generation restore did NOT actually re-key the mesh
+
+**What happened:** Excluded the GWPN1 test socket from the 10 Pro's own network first
+(clean practice), then restored `gen5_1-2_NVM_20260701124605.bin` onto the Z-Stick 10
+Pro. The restore/conversion **completed without error** this time (unlike the earlier
+SDK<6.61 failure) and produced a **new home ID, `0xccf8fef4`** (different from both the
+Gen5's `0xde2f557d` and the 10 Pro's old `0xcd2fc96a` — this new-home-ID behaviour is
+the documented, expected way a proper 500→800-series conversion works, generating a
+fresh ID and — supposedly — reprogramming it across the mesh to every node).
+
+The controller's own node table (`ccf8fef4.jsonl` cache file) showed entries for all
+expected nodes: **1, 3–16, 20**, plus an unexpected extra, **node 227** (very likely a
+virtual/reserved node artifact of the cross-generation conversion — high ID near the
+classic Z-Wave ceiling of 232, not a real device).
+
+**But this did not mean real communication was established.** Digging into the driver
+log for the full post-restore session (all 621 lines from reconnect to idle) showed:
+- Every node got a **local** `GetNodeProtocolInfo` lookup (this only asks the
+  controller chip what it has cached in its own NVM table — it is NOT a live RF
+  message to the physical device, and proves nothing about reachability)
+- **Zero** ping/alive/ready results for any of nodes 3–16, 20, 227 — the interview
+  queue did the local lookups then fell straight into idle `GetBackgroundRSSI` polling
+  and never actually tried to contact any real device
+- Confirmed directly: node 4 ("Conservatory Garden Globe") showed **device type
+  unknown** in the UI, and a manual ping **failed**
+
+**Conclusion:** despite meeting the documented SDK≥6.61 prerequisite and completing
+without error, this cross-generation (500-series → 800-series) NVM restore created
+phantom table entries on the 10 Pro without actually reprogramming the physical
+devices' stored home ID. This matches a known zwave-js community-reported failure mode
+for this exact kind of restore (500-series firmware 1.2 → newer-generation controller
+resulting in "all nodes dead"). The SDK≥6.61 prerequisite is necessary but evidently
+**not sufficient** for a working migration.
+
+**Safety check performed — production system confirmed intact:** since the real
+devices never got the new home ID, they should still be listening for the old one.
+Swapped the Gen5 back into the Pi3B/OH: **confirmed working** — controls the
+conservatory lights correctly (initial response was slow, expected right after a
+stick replug while OH re-syncs and the mesh re-settles routes). This proves the
+physical mesh was never actually touched by the failed 10 Pro migration attempt — no
+harm done to the production system at any point.
+
+**Where this leaves the migration — decision point, not yet resolved:**
+1. **Full re-inclusion**: put the 10 Pro into inclusion mode and physically re-pair
+   each of the ~13 real devices from scratch (Qubino modules can be re-paired via
+   their wired switch, 3 toggles — see the "Worst-case recovery note" above; GreenWave
+   is easy physical access). Downside: loses old node IDs, any automations referencing
+   them need rebuilding.
+2. **Fall back to keeping the Gen5 as the permanent HA controller** via the USB hub on
+   the Pi5, skipping the Z-Stick 10 Pro migration entirely. Sidesteps this
+   cross-generation restore problem completely. Trade-off: permanent hub dependency,
+   no Z-Wave Long Range or improved S2 security (the 800-series' main advantages this
+   whole migration was chasing).
+
+Not yet decided — pick up here next session.
 
 **Worst-case recovery note (Gen5 or Gen5+ bricked beyond use, no matching-SDK spare
 left to restore onto):** the physical Z-Wave devices themselves are unaffected — they're
