@@ -483,7 +483,7 @@ Full detail: `~/projects/eddn_client/.claude/parked_issues.md` issue #17
 ### Zigbee + Thread infrastructure (parked — Z-Wave is critical path first)
 Architecture confirmed, implementation deferred:
 - **Z-Wave**: direct WebSocket to Pi5, no extra containers (ws://192.168.1.222:3001)
-- **Zigbee (MR4)**: needs 2 new NAS Portainer stacks — Mosquitto broker + Zigbee2MQTT
+- **Zigbee (MR4 = SMLIGHT SLZB-MR4U)**: needs 2 new NAS Portainer stacks — Mosquitto broker + Zigbee2MQTT
   - Zigbee2MQTT connects to MR4 via TCP (tcp://192.168.1.XX:6638)
   - HA MQTT integration points to Mosquitto on NAS
   - Draft stack YAMLs needed before implementation

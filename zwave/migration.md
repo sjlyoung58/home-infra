@@ -231,6 +231,16 @@ the cross-generation conversion step, not a general problem with NVM restore.
    (800-series only) — the remaining question is whether that matters enough to
    pursue option 1 (full re-inclusion onto the 10 Pro) instead.
 
+**Update: the 10 Pro's other original selling point is now moot too.** Its dual
+Z-Wave+Zigbee radio was part of the original rationale for choosing it over other
+controllers (see "Decision: use Z-Stick 10 Pro as final coordinator" earlier in this
+file) — but Zigbee is now planned via a separately-purchased **SMLIGHT SLZB-MR4U**
+(the "MR4" already referenced in this CLAUDE.md's parked Zigbee section), independent
+of whatever Z-Wave controller is in use. So **Z-Wave Long Range is now the only
+remaining potential benefit of the 10 Pro** over option 3 — everything else the 10 Pro
+offered (Zigbee, better S2) is either superseded (Zigbee, by the MR4U) or already
+matched by the Gen5+ (S2, SmartStart).
+
 Not yet decided between options 1/2/3 — pick up here next session.
 
 **Worst-case recovery note (Gen5 or Gen5+ bricked beyond use, no matching-SDK spare
