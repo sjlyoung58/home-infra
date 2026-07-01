@@ -224,6 +224,10 @@ node 016) remain — nothing outstanding is migration-related.
 This confirms the theory completely — the 10 Pro migration's failure was specific to
 the cross-generation conversion step, not a general problem with NVM restore.
 
+**Additionally confirmed working on OH** (Pi3B, legacy binding) — not just Z-Wave JS/HA.
+The Gen5+ is a fully compatible drop-in replacement for the Gen5 across both the old
+and new software stacks, not just the one being migrated to.
+
 **This opens a third option, beyond the two-way choice above:**
 3. **Promote the Gen5+ to permanent controller**, retiring the old Gen5 entirely. Gets
    real hardware-backed S2 security and SmartStart, no hub dependency, sidesteps the
