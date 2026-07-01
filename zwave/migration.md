@@ -211,13 +211,16 @@ unlike the 10 Pro attempt which generated a new ID). Real RF pings this time, no
 table entries:
 - **12 nodes confirmed alive with successful pings on the first attempt**: 4, 6, 7, 8,
   9, 10, 11, 12, 13, 14, 15, 20
-- **3 came back dead**, all with plausible pre-existing causes unrelated to the
-  migration:
+- **3 came back dead** on the first attempt, all with plausible pre-existing causes
+  unrelated to the migration:
   - Node 003 (Siren/Alarm) — battery likely dead, hasn't been touched in years
-  - Node 005 (Kitchen Window Plug) — likely just not powered at the wall right now
+  - Node 005 (Kitchen Window Plug) — **resolved**: physically checked, LED was flashing
+    green, manual ping brought it back alive. Now **13 of 15 confirmed alive**.
   - Node 016 — already documented in `node-map.md` as failed hardware from ~a year ago
 
 **Conclusion: the Gen5+ is a fully validated, working clone of the Gen5's network.**
+Only the two pre-existing, already-known issues (dead alarm battery, already-failed
+node 016) remain — nothing outstanding is migration-related.
 This confirms the theory completely — the 10 Pro migration's failure was specific to
 the cross-generation conversion step, not a general problem with NVM restore.
 
